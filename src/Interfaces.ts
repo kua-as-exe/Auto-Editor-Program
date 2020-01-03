@@ -5,7 +5,8 @@ export interface Template {
     css?: string,
     javascript?: string,
     processed?: true,
-    params?: Object
+    params?: Object,
+    fileName?: string
 }
 
 export interface Plugin {
