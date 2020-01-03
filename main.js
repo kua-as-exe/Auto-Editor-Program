@@ -13,7 +13,7 @@ function writeTemplate(template) {
     const getHTML = () => getFile(`${path}.html`) + (template.html ? template.html : '');
     const getJAVASCRIPT = () => getFile(`${path}.js`) + (template.javascript ? template.javascript : '');
     const existPlugin = (plugin) => template.plugins && template.plugins.includes(plugin.name);
-    const getJSON = () => JSON.parse(getFile(`${path}.json`));
+    const getJSON = () => fs_1.existsSync(`${path}.json`) ? JSON.parse(fs_1.readFileSync(`${path}.json`, 'utf8')) : {};
     const appendConfigPlugins = (config) => {
         if (config.plugins)
             template.plugins = template.plugins ?

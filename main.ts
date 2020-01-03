@@ -27,7 +27,7 @@ function writeTemplate(template: Template){
     const getHTML = ():string => getFile(`${path}.html`) + (template.html? template.html : '');
     const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript? template.javascript : '');
     const existPlugin = (plugin: Plugin): boolean | undefined => template.plugins && template.plugins.includes(plugin.name)
-    const getJSON = ():Object => JSON.parse(getFile(`${path}.json`));
+    const getJSON = ():Object => existsSync(`${path}.json`)? JSON.parse(readFileSync(`${path}.json`, 'utf8')) : {};
     const appendConfigPlugins = (config: object) => {
         if(config.plugins) 
             template.plugins = template.plugins ? 
