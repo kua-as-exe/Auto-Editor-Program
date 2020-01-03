@@ -1,10 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
-const pluginList = [
-    { name: 'bootstrap', tag: `<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">` },
-    { name: 'anime.js', tag: `<script src="../node_modules/animejs/lib/anime.min.js"></script>` }
-];
+const declarations_1 = require("./src/declarations");
 let fileNumber = 0;
 function writeTemplate(template) {
     const path = `templates/${template.name}/${template.name}`;
@@ -21,7 +18,7 @@ function writeTemplate(template) {
                 : template.plugins = config.plugins;
     };
     const getPlugins = () => template.plugins ?
-        pluginList
+        declarations_1.PluginList
             .filter(plugin => existPlugin(plugin))
             .map(plugin => plugin.tag)
             .join('\n')
@@ -45,6 +42,7 @@ function writeTemplate(template) {
             reject('template not found: ' + template.name);
     });
 }
+exports.writeTemplate = writeTemplate;
 writeTemplate({
     name: 'simpleText',
     params: { 'title': 'New day', 'bg': 'rgb(100,255,200)' },

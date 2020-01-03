@@ -1,26 +1,10 @@
 import { readFileSync, writeFileSync, existsSync} from 'fs';
-
-interface Template {
-    name: string,
-    plugins?: string[],
-    html? : string,
-    css?: string,
-    javascript?: string,
-    processed?: true,
-    params?: Object
-}
-interface Plugin {
-    name: string,
-    tag: string
-}
-const pluginList: Plugin[] = [
-    { name: 'bootstrap', tag: `<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">` },
-    { name: 'anime.js', tag: `<script src="../node_modules/animejs/lib/anime.min.js"></script>` }
-]
+import { Plugin, Template } from './src/interfaces';
+import { PluginList } from './src/declarations';
 
 let fileNumber = 0;
 
-function writeTemplate(template: Template){
+export function writeTemplate(template: Template){
     const path = `templates/${template.name}/${template.name}`;
     const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
     const getCSS = ():string => getFile(`${path}.css`) + (template.css? template.css : '');
@@ -37,7 +21,7 @@ function writeTemplate(template: Template){
     
     const getPlugins = ():string => 
             template.plugins? 
-            pluginList
+            PluginList
                 .filter( plugin => existPlugin(plugin) )
                 .map( plugin => plugin.tag )
                 .join('\n')
