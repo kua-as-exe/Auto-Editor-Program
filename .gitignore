@@ -1,4 +1,6 @@
 node_modules/
+previous_files/
+recorder/
+
 **.mp4
 **.avi
-previous files/**
