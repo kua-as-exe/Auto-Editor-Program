@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Main</title>
+
+<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+<script src="../node_modules/animejs/lib/anime.min.js"></script>
+<script src="../node_modules/typed.js/lib/typed.min.js"></script>
+
+</head><body>
+
+    <style>
+        
+body {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.square {
+    width: 60px;
+    height: 60px;
+    margin: 10px;
+    background-color:red;
+}
+
+#text{
+    font-size: 40px;
+}
+
+#bg {
+    padding: 2rem;
+}
+
+    </style>
+
+    <main>
+
+
+<div id="bg">
+    <div class="row">
+        <div class="square" id="t1"></div>
+        <div class="square" id="t2"></div>
+        <div class="square" id="t3"></div>
+        <div class="square" id="t4"></div>
+        <div class="square" id="t5"></div>
+        <div class="square" id="t6"></div>
+    </div>
+    <span id="text">Prueba exitosa</span>
+    <br>
+    <span>Aquí triunfando como siempre</span>
+    <br>
+    <span>Saludos Men</span>
+    
+</div><script src="/reload/reload.js"></script>
+
+    </main>
+
+    <script>
+
+"use strict";
+var params = { /*PARAMS*/};
+
+console.log(params);
+
+var typed6 = new Typed('#text', {
+    strings: ['^1000','Prueba exitosa^2000', 'Comenzando autodestrucción^1000', '3^1000', '2^1000', '1^1000', 'Ah te la creiste we xd^1000','^1000'],
+    typeSpeed: 40, backSpeed: 50, loop: true
+});
+
+anime.timeline({
+    loop: true,
+    autoplay: true,
+}).add({
+    targets: '.square',
+    scale: 1,
+    easing: 'easeInOutQuart',
+    delay: (f,d)=> d*120,
+    duration: 250
+}).add({
+    targets: '.square',
+    scale: 1.2,
+    easing: 'easeInOutQuart',
+    delay: (f,d)=> d*120,
+    duration: 500
+})
+.add({
+    targets: '.square',
+    scale: 1,
+    easing: 'easeInOutQuart',
+    delay: (f,d)=> d*120,
+    duration: 250
+})
+
+
+    </script>
+
+</body></html>

@@ -8,13 +8,14 @@ body {
 }
 
 .square {
-    width: 30px;
-    height: 30px;
-    background-color: aqua;
+    width: 60px;
+    height: 60px;
+    margin: 10px;
+    background-color:red;
 }
 
-h1{
-    opacity: 0%;
+#text{
+    font-size: 40px;
 }
 
 #bg {

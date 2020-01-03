@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync} from 'fs';
 import { Plugin, Template } from './Interfaces';
 import { PluginList } from './Declarations';
+import { Interface } from 'readline';
 
 let fileNumber = 0;
 
@@ -12,7 +13,7 @@ export function writeTemplate(template: Template){
     const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript? template.javascript : '');
     const existPlugin = (plugin: Plugin): boolean | undefined => template.plugins && template.plugins.includes(plugin.name)
     const getJSON = ():Object => existsSync(`${path}.json`)? JSON.parse(readFileSync(`${path}.json`, 'utf8')) : {};
-    const appendConfigPlugins = (config: object) => {
+    const appendConfigPlugins = (config: any) => {
         if(config.plugins) 
             template.plugins = template.plugins ? 
                     template.plugins.concat(config.plugins) 
@@ -38,8 +39,9 @@ export function writeTemplate(template: Template){
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
             if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
 
-            const fileName = `temp${fileNumber}.html`;
-            writeFileSync(`recorder/${fileName}`, mainTemplate);
+            const fileName = template.customName? template.customName: `temp${fileNumber}.html`;
+            const path = template.customPath? template.customPath: 'recorder';
+            writeFileSync(`${path}/${fileName}`, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
             fileNumber++;

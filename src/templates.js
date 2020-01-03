@@ -33,8 +33,9 @@ function writeTemplate(template) {
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
             if (template.params)
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
-            const fileName = `temp${fileNumber}.html`;
-            fs_1.writeFileSync(`recorder/${fileName}`, mainTemplate);
+            const fileName = template.customName ? template.customName : `temp${fileNumber}.html`;
+            const path = template.customPath ? template.customPath : 'recorder';
+            fs_1.writeFileSync(`${path}/${fileName}`, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
             fileNumber++;

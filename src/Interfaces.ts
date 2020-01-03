@@ -6,11 +6,14 @@ export interface Template {
     javascript?: string,
     processed?: true,
     params?: Object,
-    fileName?: string
+    fileName?: string,
+    customPath?: string,
+    customName?: string,
 }
 
 export interface Plugin {
     name: string,
-    tag: string
+    tag: string,
+    src?: string
 }
 

@@ -1,3 +1,3 @@
 {
-    "plugins": ["anime.js"]
+    "plugins": ["anime.js", "bootstrap", "typed.js"]
 }
