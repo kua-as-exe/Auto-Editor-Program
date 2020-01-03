@@ -9,10 +9,17 @@ let fileNumber = 0;
 function writeTemplate(template) {
     const path = `templates/${template.name}/${template.name}`;
     const getFile = (path) => fs_1.existsSync(path) ? fs_1.readFileSync(path, 'utf8') : '';
-    const getCSS = () => template.css ? template.css : getFile(`${path}.css`);
-    const getHTML = () => template.html ? template.html : getFile(`${path}.html`);
-    const getJAVASCRIPT = () => template.javascript ? template.javascript : getFile(`${path}.js`);
+    const getCSS = () => getFile(`${path}.css`) + (template.css ? template.css : '');
+    const getHTML = () => getFile(`${path}.html`) + (template.html ? template.html : '');
+    const getJAVASCRIPT = () => getFile(`${path}.js`) + (template.javascript ? template.javascript : '');
     const existPlugin = (plugin) => template.plugins && template.plugins.includes(plugin.name);
+    const getJSON = () => JSON.parse(getFile(`${path}.json`));
+    const appendConfigPlugins = (config) => {
+        if (config.plugins)
+            template.plugins = template.plugins ?
+                template.plugins.concat(config.plugins)
+                : template.plugins = config.plugins;
+    };
     const getPlugins = () => template.plugins ?
         pluginList
             .filter(plugin => existPlugin(plugin))
@@ -22,6 +29,7 @@ function writeTemplate(template) {
     return new Promise((resolve, reject) => {
         if (fs_1.existsSync(`templates/${template.name}`)) {
             let mainTemplate = getFile(`templates/mainTemplate.html`);
+            appendConfigPlugins(getJSON());
             mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, getPlugins());
             mainTemplate = mainTemplate.replace(`/*STYLES*/`, getCSS());
             mainTemplate = mainTemplate.replace(`<!--HTML-->`, getHTML());
@@ -39,15 +47,13 @@ function writeTemplate(template) {
 }
 writeTemplate({
     name: 'simpleText',
-    params: { 'title': 'New day' },
-    plugins: ['bootstrap', 'anime.js']
+    params: { 'title': 'New day', 'bg': 'rgb(100,255,200)' },
 }).then((res) => {
     console.log(res);
 }).catch((err) => { console.log(err); });
 writeTemplate({
     name: 'simpleText',
     params: { 'title': 'Éxito éxito éxito', 'color1': 'rgb(255,255,0)' },
-    plugins: ['anime.js']
 }).then((res) => {
     console.log(res);
 }).catch((err) => { console.log(err); });

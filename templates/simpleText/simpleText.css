@@ -16,3 +16,7 @@ body {
 h1{
     opacity: 0%;
 }
+
+#bg {
+    padding: 2rem;
+}
