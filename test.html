@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+        <title>Document</title>
+    </head>
+    <style>
+        body {
+           margin: 0;
+           padding: 0;
+           height: 100vh;
+           display: flex;
+           justify-content: center;
+           align-items: center; 
+        }
+
+        .box {
+            width: auto;
+            height: auto;
+            padding: 8vw;
+            background-color:darkslategrey;
+            font-size: 10vw;
+            color: white;
+            z-index: 2;
+        }
+        .square {
+            position: absolute;
+            background-color: red;
+            width: 5%;
+            height: 5%;
+            z-index: 1;
+        }
+
+    </style>
+    <body>
+        <div class="square" id="t"></div>
+
+        <div class="box">
+            <span id="typed6"></span>
+        </div>
+          
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+    </body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var typed6 = new Typed('#typed6', {
+                strings: ['^1000','Hola Jorge^1000', 'Lo lograste^2000', 'Ahora vamonos alv^1000', ''],
+                typeSpeed: 50, backSpeed: 40,
+            });
+            anime.timeline({
+                loop: true,
+                autoplay: true
+            }).add({
+                targets: '.square',
+                width: ['5%', '80%'],
+                duration: 1000,
+                easing: 'easeInOutQuart',
+            }).add({
+                targets: '.square',
+                height: ['5%', '80%'],
+                duration: 1000,
+                easing: 'easeInOutQuart',
+            }).add({
+                targets: '.square',
+                borderRadius: ['0%', '20%'],
+                backgroundColor: 'rgb(255,100,255)',
+                duration: 1000,
+                easing: 'easeInOutQuart',
+            }).add({
+                targets: '.square',
+                rotate: 90,
+                duration: 1000,
+                easing: 'easeInOutQuart',
+            }).add({
+                targets: '.square',
+                width: ['80%','5%'],
+                height: ['80%','5%'],
+                backgroundColor: 'rgb(255,225,255)',
+                duration:1000,
+                easing: 'easeInOutCubic',
+            })
+            
+        });
+    </script>
+</html>
