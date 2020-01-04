@@ -6,12 +6,12 @@
 }
 
 #text{
-    font-size: 25px;
+    font-size: 20px;
     font-style: oblique;
 }
 
 #bg {
-    padding: 1.5rem;
+    padding: 1rem;
     background-color: rgba(160, 255, 239, 0.527);
     width: 450px;
     height: 150px;

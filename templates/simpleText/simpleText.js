@@ -5,12 +5,18 @@ if(params.width) main.style.width = params.width;
 if(params.height) main.style.height = params.height;
 console.log(params);
 
-if(params.text && document.getElementById('texto')) document.getElementById('texto').innerText = params.text
+//if(params.text && document.getElementById('texto')) document.getElementById('texto').innerText = params.text
 
 var typed6 = new Typed('#text', {
-    strings: ['^1000','Prueba exitosa^2000', 'Comenzando autodestrucción^1000', '3^1000', '2^1000', '1^1000', 'Ah te la creiste we xd^1000','^1000'],
-    typeSpeed: 40, backSpeed: 50, loop: true
+    strings: ['^1000','Buenas noches...^2000', 'Descansen^1000', 'que cuando el mundo se acabe ya no podrán^1000'],
+    typeSpeed: 40, backSpeed: 50
 });
+setTimeout( ()=>{
+    var typed7 = new Typed('#texto', {
+        strings: ['atte. Donald Trump'],
+        typeSpeed: 40, backSpeed: 50
+    });
+}, 14000);
 
 anime.timeline({
     loop: true,
