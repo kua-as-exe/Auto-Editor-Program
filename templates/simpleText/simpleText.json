@@ -1,3 +1,5 @@
 {
-    "plugins": ["anime.js", "bootstrap", "typed.js"]
+    "plugins": ["anime.js", "typed.js", "bootstrap"],
+    "width": "450px",
+    "heigth": "150px"
 }

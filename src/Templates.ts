@@ -1,7 +1,6 @@
 import { readFileSync, writeFileSync, existsSync} from 'fs';
 import { Plugin, Template } from './Interfaces';
 import { PluginList } from './Declarations';
-import { Interface } from 'readline';
 
 let fileNumber = 0;
 
