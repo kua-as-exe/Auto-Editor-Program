@@ -11,11 +11,10 @@ function writeTemplate(template) {
     const getJAVASCRIPT = () => getFile(`${path}.js`) + (template.javascript ? template.javascript : '');
     const existPlugin = (plugin) => template.plugins && template.plugins.includes(plugin.name);
     const getJSON = () => fs_1.existsSync(`${path}.json`) ? JSON.parse(fs_1.readFileSync(`${path}.json`, 'utf8')) : {};
-    const appendConfigPlugins = (config) => {
-        if (config.plugins)
-            template.plugins = template.plugins ?
-                template.plugins.concat(config.plugins)
-                : template.plugins = config.plugins;
+    const appendConfigPlugins = (plugins) => {
+        template.plugins = template.plugins ?
+            template.plugins.concat(plugins)
+            : template.plugins = plugins;
     };
     const getPlugins = () => template.plugins ?
         Declarations_1.PluginList
@@ -25,12 +24,20 @@ function writeTemplate(template) {
         : '';
     return new Promise((resolve, reject) => {
         if (fs_1.existsSync(`templates/${template.name}`)) {
-            let mainTemplate = getFile(`templates/mainTemplate.html`);
-            appendConfigPlugins(getJSON());
+            let mainTemplate = getFile(template.customTemplate ? template.customTemplate : `templates/mainTemplate.html`);
+            let config = getJSON();
+            if (config.plugins)
+                appendConfigPlugins(config.plugins);
             mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, getPlugins());
             mainTemplate = mainTemplate.replace(`/*STYLES*/`, getCSS());
             mainTemplate = mainTemplate.replace(`<!--HTML-->`, getHTML());
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
+            if (!template.params)
+                template.params = {};
+            if (config.width)
+                template.params.width = config.width;
+            if (config.height)
+                template.params.height = config.height;
             if (template.params)
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
             const fileName = template.customName ? template.customName : `temp${fileNumber}.html`;

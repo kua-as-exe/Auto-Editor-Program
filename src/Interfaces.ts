@@ -5,10 +5,11 @@ export interface Template {
     css?: string,
     javascript?: string,
     processed?: true,
-    params?: Object,
+    params?: Object | any,
     fileName?: string,
     customPath?: string,
     customName?: string,
+    customMainTemplate?: string
 }
 
 export interface Plugin {

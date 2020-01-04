@@ -14,6 +14,7 @@ var app = express()
 
 const currentTemplate = 'simpleText';
 const templateBuilderPath = './templateBuilder';
+const builderPageTemplate = 'builderPageTemplate.html';
  
 app.set('port', process.env.PORT || 3000)
 app.use(logger('dev'))
@@ -38,29 +39,7 @@ const refreshFile = () => {
         name: currentTemplate,
         customPath: templateBuilderPath,
         customName: 'index.html',
-        html: `<script src="/reload/reload.js"></script>`,
-        css: `
-            main {
-                width: 450px; height: 150px;
-                background-image: url(assets/transparentBG.jpg);
-            }
-            container{
-                box-shadow: 0px 10px 20px 2px black;
-                padding: 8px;
-                background: #ffffff;
-                border-radius: 3px;
-            }
-            body {
-                margin: 0;
-                padding: 0;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-image: linear-gradient(45deg, #434343 0%, #29323c 100%);
-            }
-        `,
-        javascript: '\nsetTimeout( ()=>{document.body.style.display = "flex";}, 100);'
+        customMainTemplate: path.join(templateBuilderPath, builderPageTemplate)
     }).then( (temp: any) => {
         const plugins: any[] = temp.plugins? temp.plugins: [];
         const pluginSources = PluginList.filter(plugin => plugins.includes(plugin.name))

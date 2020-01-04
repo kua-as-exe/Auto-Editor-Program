@@ -1,14 +1,14 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Main</title>
 
-<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 <script src="../node_modules/animejs/lib/anime.min.js"></script>
 <script src="../node_modules/typed.js/lib/typed.min.js"></script>
+    <link rel="stylesheet" href="./builderPageTemplate.css">
+    </head><body>
 
-</head><body>
-
-    <style>
-        
-.square {
+        <style>
+            
+    .square {
     width: 20px;
     height: 20px;
     margin: 10px;
@@ -26,33 +26,13 @@
     width: 450px;
     height: 150px;
 }
-            main {
-                width: 450px; height: 150px;
-                background-image: url(assets/transparentBG.jpg);
-            }
-            container{
-                box-shadow: 0px 10px 20px 2px black;
-                padding: 8px;
-                background: #ffffff;
-                border-radius: 3px;
-            }
-            body {
-                margin: 0;
-                padding: 0;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-image: linear-gradient(45deg, #434343 0%, #29323c 100%);
-            }
-        
 
-    </style>
-
-<container>
-    <main>
-
-
+        </style>
+    
+    <container>
+        <main>
+    
+    
 <div id="bg">
     <div class="row">
         <div class="square" id="t1"></div>
@@ -64,19 +44,23 @@
     </div>
     <span id="text">Prueba exitosa</span>
     <br>
-    <span>Aquí triunfando como siempre</span>
+    <span id="texto">Aquí triunfando como siempre</span>
     
-</div><script src="/reload/reload.js"></script>
-
-    </main>
-</container>
+</div>
     
-    <script>
-
-"use strict";
-var params = { /*PARAMS*/};
-
+        </main>
+    </container>    
+        <script src="/reload/reload.js"></script>
+        <script>
+    
+    "use strict";
+var params = {"width":"450px","height":"150px"};
+const main = document.getElementsByTagName('main')[0];
+if(params.width) main.style.width = params.width;
+if(params.height) main.style.height = params.height;
 console.log(params);
+
+if(params.text && document.getElementById('texto')) document.getElementById('texto').innerText = params.text
 
 var typed6 = new Typed('#text', {
     strings: ['^1000','Prueba exitosa^2000', 'Comenzando autodestrucción^1000', '3^1000', '2^1000', '1^1000', 'Ah te la creiste we xd^1000','^1000'],
@@ -107,8 +91,8 @@ anime.timeline({
     duration: 250
 })
 
-setTimeout( ()=>{document.body.style.display = "flex";}, 100);
-
-    </script>
-
-</body></html>
+    
+        </script>
+        <script src="./builderPageTemplate.js"></script>
+    
+    </body></html>
