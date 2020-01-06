@@ -8,9 +8,9 @@ let fileNumber = 0;
 export function writeTemplate(template: Template): Promise<Template>{
     const path = `templates/${template.name}/${template.name}`;
     const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
-    const getCSS = ():string => getFile(`${path}.css`) + (template.css? template.css : '');
-    const getHTML = ():string => getFile(`${path}.html`) + (template.html? template.html : '');
-    const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript? template.javascript : '');
+    const getCSS = ():string => getFile(`${path}.css`) + (template.css || '');
+    const getHTML = ():string => getFile(`${path}.html`) + (template.html || '');
+    const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript || '');
     const existPlugin = (plugin: Plugin): boolean | undefined => template.plugins && template.plugins.includes(plugin.name)
     const getJSON = ():Object => existsSync(`${path}.json`)? JSON.parse(readFileSync(`${path}.json`, 'utf8')) : {};
     const appendConfigPlugins = (plugins: string[]) => {
@@ -29,7 +29,7 @@ export function writeTemplate(template: Template): Promise<Template>{
 
     return new Promise<Template>( (resolve, reject) => {
         if(existsSync(`templates/${template.name}`)) {
-            let mainTemplate: string = getFile(template.customMainTemplate? template.customMainTemplate : `templates/mainTemplate.html`);
+            let mainTemplate: string = getFile(template.customMainTemplate || `templates/mainTemplate.html`);
             let config: any = getJSON(); 
 
             if(config.plugins) appendConfigPlugins(config.plugins);
@@ -43,8 +43,8 @@ export function writeTemplate(template: Template): Promise<Template>{
 
             if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
 
-            const fileName = template.customName? template.customName: `temp${fileNumber}.html`;
-            const path = template.customPath? template.customPath: 'recorder';
+            const fileName = template.customName || `temp${fileNumber}.html`;
+            const path = template.customPath || 'recorder';
             template.outputUrl = `${path}/${fileName}`;
             writeFileSync(template.outputUrl, mainTemplate);
             template.processed = true;

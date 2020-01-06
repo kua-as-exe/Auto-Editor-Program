@@ -22,17 +22,8 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, templateBuilderPath)));
 var server = http.createServer(app)
 
-//var loadedPlugins: Plugin[] = [];
-const loadPlugin = (plugin: Plugin) => {
+const loadPlugin = (plugin: Plugin) => 
     copySync(path.join('./',plugin.src), path.join(templateBuilderPath, plugin.src));
-    //loadedPlugins.push(plugin);
-}
-/*
-const unLoadPlugin = (plugin: Plugin) => {
-    console.log(path.join(templateBuilderPath, path.parse(plugin.src).dir.split('/')[1]))
-    unlinkSync(path.join(templateBuilderPath, plugin.src));
-    delete loadedPlugins[loadedPlugins.indexOf(plugin)];
-}*/
 
 const refreshFile = () => {
     return writeTemplate({
@@ -41,7 +32,7 @@ const refreshFile = () => {
         customName: 'index.html',
         customMainTemplate: path.join(templateBuilderPath, builderPageTemplate)
     }).then( (temp: Template) => {
-        const plugins: any[] = temp.plugins? temp.plugins: [];
+        const plugins: any[] = temp.plugins|| [];
         const pluginSources = PluginList.filter(plugin => plugins.includes(plugin.name))
         pluginSources.forEach( plugin => {
             if(!existsSync(path.join(templateBuilderPath, plugin.src))) loadPlugin(plugin)
