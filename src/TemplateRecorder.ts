@@ -28,5 +28,4 @@ export const recordTemplate = async (config: RecordConfig): Promise<any> => {
         .then( () => resolve(options))
         .catch( (err: any) => reject(err))
     });
-    //return timecut(options);
 };

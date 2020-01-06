@@ -37,5 +37,4 @@ exports.recordTemplate = (config) => __awaiter(void 0, void 0, void 0, function*
             .then(() => resolve(options))
             .catch((err) => reject(err));
     });
-    //return timecut(options);
 });

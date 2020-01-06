@@ -12,8 +12,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const TemplateRecorder_1 = require("./src/TemplateRecorder");
 const Templates_1 = require("./src/Templates");
 const path_1 = require("path");
+const util_1 = require("util");
+const processElement = (_element, _dir) => {
+    return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+        if (util_1.isUndefined(_element))
+            reject("Element its undefined: " + JSON.stringify(_element));
+        let dir = _dir || './recorder';
+        let element = _element;
+        let htmlFile = yield Templates_1.writeTemplate(element.templateConfig);
+        let filename = path_1.basename(htmlFile.fileName || '', '.html');
+        element.recordConfig = {
+            inputUrl: htmlFile.outputUrl || "",
+            outNameFile: path_1.join(dir, filename),
+            duration: htmlFile.params.duration || 3,
+            width: htmlFile.params.width,
+            height: htmlFile.params.height,
+            transparent: true,
+        };
+        element.videoOutput = yield TemplateRecorder_1.recordTemplate(element.recordConfig);
+        resolve(element);
+    }));
+};
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const element = {
+    processElement({
         templateConfig: {
             name: 'simpleText',
             params: {
@@ -21,20 +42,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
                 'duration': 1
             }
         }
-    };
-    let file = yield Templates_1.writeTemplate(element.templateConfig);
-    let dir = './recorder';
-    let filename = path_1.basename(file.fileName || '', '.html');
-    element.recordConfig = {
-        inputUrl: file.outputUrl || "",
-        outNameFile: path_1.join(dir, filename),
-        duration: file.params.duration || 3,
-        width: file.params.width,
-        height: file.params.height,
-        transparent: true,
-    };
-    let videoOutput = yield TemplateRecorder_1.recordTemplate(element.recordConfig);
-    element.videoOutput = videoOutput;
-    console.log(element);
+    }).then((result) => {
+        console.log(result);
+    });
 });
 main();
