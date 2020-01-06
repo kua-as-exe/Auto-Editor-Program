@@ -1,3 +1,9 @@
+export interface VideoElement {
+    templateConfig: Template,
+    recordConfig?: RecordConfig,
+    videoOutput?: Object
+}
+
 export interface Template {
     name: string,
     plugins?: string[],
@@ -10,7 +16,8 @@ export interface Template {
     customPath?: string,
     customName?: string,
     customMainTemplate?: string,
-    outputUrl?: string
+    outputUrl?: string,
+    videoOutput?: Object
 }
 
 export interface Plugin {
@@ -27,5 +34,6 @@ export interface RecordConfig {
     height: number | string,
     fps? : number,
     keepFrames? : boolean,
-    transparent? :boolean
+    transparent? :boolean,
+    //timecutConfig?: Object
 }

@@ -1,23 +1,25 @@
 import { recordTemplate } from './src/TemplateRecorder';
 import { writeTemplate } from './src/Templates';
-import { Template, RecordConfig } from './src/Interfaces';
+import { Template, RecordConfig, VideoElement } from './src/Interfaces';
 import { basename, join } from 'path';
 
 const main = async () => {
     
-    const templateConfig: Template = {
-        name: 'simpleText', 
-        params: {
-            'text': 'Vamos bien, vamos bien',
-            'duration': 15
+    const element: VideoElement = {
+        templateConfig: {
+            name: 'simpleText', 
+            params: {
+                'text': 'Vamos bien, vamos bien',
+                'duration': 1
+            }
         }
     }
 
-    let file: Template = await writeTemplate(templateConfig)
+    let file: Template = await writeTemplate(element.templateConfig);
     let dir = './recorder';
     let filename = basename(file.fileName || '', '.html');
 
-    const videoConfig: RecordConfig = {
+    element.recordConfig = {
         inputUrl: file.outputUrl || "",
         outNameFile: join(dir, filename),
         duration: file.params.duration || 3,
@@ -25,9 +27,10 @@ const main = async () => {
         height: file.params.height,
         transparent: true,
     }
-    let videoOutput = await recordTemplate(videoConfig)
-    console.log(videoOutput);
 
+    let videoOutput = await recordTemplate(element.recordConfig)
+    element.videoOutput = videoOutput;
+    console.log(element)
 }
 
 main();

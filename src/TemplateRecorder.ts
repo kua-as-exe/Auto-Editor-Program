@@ -2,7 +2,7 @@ import { RecordConfig } from "./Interfaces";
 const isUndefined = require("is-undefined");
 const timecut = require('timecut');
 
-export const recordTemplate = (config: RecordConfig): Promise<any> => {
+export const recordTemplate = async (config: RecordConfig): Promise<any> => {
     if(isUndefined(config.transparent)) config.transparent = false;
     const getOutputFile = ()=> config.outNameFile + (config.transparent? '.avi': '.mp4');
     if(typeof config.width == 'string') config.width = Number(String(config.width).replace('px', ''));
@@ -23,5 +23,10 @@ export const recordTemplate = (config: RecordConfig): Promise<any> => {
         options.pixFmt = '';
     }
 
-    return timecut(options);
+    return new Promise( (resolve, reject) => {
+        timecut(options)
+        .then( () => resolve(options))
+        .catch( (err: any) => reject(err))
+    });
+    //return timecut(options);
 };
