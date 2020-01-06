@@ -1,7 +1,7 @@
 import { writeTemplate } from './src/Templates';
 import { PluginList } from './src/Declarations';
 import { copySync, existsSync, removeSync } from 'fs-extra';
-import { Plugin } from './src/Interfaces';
+import { Plugin, Template } from './src/Interfaces';
 var express = require('express')
 var http = require('http')
 var path = require('path')
@@ -40,7 +40,7 @@ const refreshFile = () => {
         customPath: templateBuilderPath,
         customName: 'index.html',
         customMainTemplate: path.join(templateBuilderPath, builderPageTemplate)
-    }).then( (temp: any) => {
+    }).then( (temp: Template) => {
         const plugins: any[] = temp.plugins? temp.plugins: [];
         const pluginSources = PluginList.filter(plugin => plugins.includes(plugin.name))
         pluginSources.forEach( plugin => {

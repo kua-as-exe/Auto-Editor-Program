@@ -18,6 +18,13 @@ setTimeout( ()=>{
     });
 }, 14000);
 
+anime({
+    targets: '#bg',
+    width: [0, 450],
+    easing: 'easeInOutQuart',
+    duration: 2000
+})
+
 anime.timeline({
     loop: true,
     autoplay: true,

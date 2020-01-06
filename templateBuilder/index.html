@@ -25,6 +25,7 @@
     background-color: rgba(160, 255, 239, 0.527);
     width: 450px;
     height: 150px;
+    overflow: auto;
 }
 
         </style>
@@ -54,7 +55,7 @@
         <script>
     
     "use strict";
-var params = {"width":"450px","height":"150px"};
+var params = {};
 const main = document.getElementsByTagName('main')[0];
 if(params.width) main.style.width = params.width;
 if(params.height) main.style.height = params.height;
@@ -72,6 +73,13 @@ setTimeout( ()=>{
         typeSpeed: 40, backSpeed: 50
     });
 }, 14000);
+
+anime({
+    targets: '#bg',
+    width: [0, 450],
+    easing: 'easeInOutQuart',
+    duration: 2000
+})
 
 anime.timeline({
     loop: true,

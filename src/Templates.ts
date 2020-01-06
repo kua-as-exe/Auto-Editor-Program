@@ -1,10 +1,11 @@
 import { readFileSync, writeFileSync, existsSync} from 'fs';
 import { Plugin, Template } from './Interfaces';
 import { PluginList } from './Declarations';
+const mergeJSON = require('merge-json').merge;
 
 let fileNumber = 0;
 
-export function writeTemplate(template: Template){
+export function writeTemplate(template: Template): Promise<Template>{
     const path = `templates/${template.name}/${template.name}`;
     const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
     const getCSS = ():string => getFile(`${path}.css`) + (template.css? template.css : '');
@@ -26,9 +27,9 @@ export function writeTemplate(template: Template){
                 .join('\n')
             : '';
 
-    return new Promise( (resolve, reject) => {
+    return new Promise<Template>( (resolve, reject) => {
         if(existsSync(`templates/${template.name}`)) {
-            let mainTemplate: string = getFile(template.customTemplate? template.customTemplate : `templates/mainTemplate.html`);
+            let mainTemplate: string = getFile(template.customMainTemplate? template.customMainTemplate : `templates/mainTemplate.html`);
             let config: any = getJSON(); 
 
             if(config.plugins) appendConfigPlugins(config.plugins);
@@ -38,14 +39,14 @@ export function writeTemplate(template: Template){
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
 
             if(!template.params) template.params = {};
-            if(config.width) template.params.width = config.width;
-            if(config.height) template.params.height = config.height;
+            template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
 
             if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
 
             const fileName = template.customName? template.customName: `temp${fileNumber}.html`;
             const path = template.customPath? template.customPath: 'recorder';
-            writeFileSync(`${path}/${fileName}`, mainTemplate);
+            template.outputUrl = `${path}/${fileName}`;
+            writeFileSync(template.outputUrl, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
             fileNumber++;

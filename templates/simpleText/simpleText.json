@@ -1,5 +1,8 @@
 {
     "plugins": ["anime.js", "typed.js", "bootstrap"],
-    "width": "450px",
-    "height": "150px"
+    "defParams":{
+        "width": "450px",
+        "height": "150px",
+        "duration": 5
+    }
 }

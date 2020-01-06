@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const Declarations_1 = require("./Declarations");
+const mergeJSON = require('merge-json').merge;
 let fileNumber = 0;
 function writeTemplate(template) {
     const path = `templates/${template.name}/${template.name}`;
@@ -24,7 +25,7 @@ function writeTemplate(template) {
         : '';
     return new Promise((resolve, reject) => {
         if (fs_1.existsSync(`templates/${template.name}`)) {
-            let mainTemplate = getFile(template.customTemplate ? template.customTemplate : `templates/mainTemplate.html`);
+            let mainTemplate = getFile(template.customMainTemplate ? template.customMainTemplate : `templates/mainTemplate.html`);
             let config = getJSON();
             if (config.plugins)
                 appendConfigPlugins(config.plugins);
@@ -34,15 +35,13 @@ function writeTemplate(template) {
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
             if (!template.params)
                 template.params = {};
-            if (config.width)
-                template.params.width = config.width;
-            if (config.height)
-                template.params.height = config.height;
+            template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
             if (template.params)
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
             const fileName = template.customName ? template.customName : `temp${fileNumber}.html`;
             const path = template.customPath ? template.customPath : 'recorder';
-            fs_1.writeFileSync(`${path}/${fileName}`, mainTemplate);
+            template.outputUrl = `${path}/${fileName}`;
+            fs_1.writeFileSync(template.outputUrl, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
             fileNumber++;

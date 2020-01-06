@@ -9,7 +9,8 @@ export interface Template {
     fileName?: string,
     customPath?: string,
     customName?: string,
-    customMainTemplate?: string
+    customMainTemplate?: string,
+    outputUrl?: string
 }
 
 export interface Plugin {
@@ -18,3 +19,13 @@ export interface Plugin {
     src?: string
 }
 
+export interface RecordConfig {
+    inputUrl: string,
+    outNameFile: string,
+    duration: number,
+    width: number | string,
+    height: number | string,
+    fps? : number,
+    keepFrames? : boolean,
+    transparent? :boolean
+}
