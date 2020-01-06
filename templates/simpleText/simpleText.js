@@ -8,12 +8,12 @@ console.log(params);
 //if(params.text && document.getElementById('texto')) document.getElementById('texto').innerText = params.text
 
 var typed6 = new Typed('#text', {
-    strings: ['^1000','Buenas noches...^2000', 'Descansen^1000', 'que cuando el mundo se acabe ya no podrán^1000'],
+    strings: ['^1000','Barnie es un dinosaurio^1000', 'que vive en nuestras mentes^1000', 'cuando se hace grande^1000'],
     typeSpeed: 40, backSpeed: 50
 });
 setTimeout( ()=>{
     var typed7 = new Typed('#texto', {
-        strings: ['atte. Donald Trump'],
+        strings: ['es realmente sorprendente'],
         typeSpeed: 40, backSpeed: 50
     });
 }, 14000);

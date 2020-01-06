@@ -22,10 +22,26 @@
 
 #bg {
     padding: 1rem;
-    background-color: rgba(160, 255, 239, 0.527);
-    width: 450px;
-    height: 150px;
+    background-color: rgba(251, 255, 43, 0.527);
+    width: 80%;
+    height: 80%;
     overflow: auto;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px 0px black;
+    margin: 20px;
+}
+
+.s {
+    background-color: green;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+}
+.ss {
+    background-color: rgba(160, 255, 239, 0.384);
+    width: 20px;
+    height: 20px;
+    position: absolute;
 }
 
         </style>
@@ -33,7 +49,9 @@
     <container>
         <main>
     
-    
+    <div class="s"></div>
+<div class="ss"></div>
+
 <div id="bg">
     <div class="row">
         <div class="square" id="t1"></div>
@@ -55,7 +73,7 @@
         <script>
     
     "use strict";
-var params = {};
+var params = {"width":"500px","height":"200px","duration":5,"videoPosition":{"x":10,"y":10}};
 const main = document.getElementsByTagName('main')[0];
 if(params.width) main.style.width = params.width;
 if(params.height) main.style.height = params.height;
@@ -64,12 +82,12 @@ console.log(params);
 //if(params.text && document.getElementById('texto')) document.getElementById('texto').innerText = params.text
 
 var typed6 = new Typed('#text', {
-    strings: ['^1000','Buenas noches...^2000', 'Descansen^1000', 'que cuando el mundo se acabe ya no podrán^1000'],
+    strings: ['^1000','Barnie es un dinosaurio^1000', 'que vive en nuestras mentes^1000', 'cuando se hace grande^1000'],
     typeSpeed: 40, backSpeed: 50
 });
 setTimeout( ()=>{
     var typed7 = new Typed('#texto', {
-        strings: ['atte. Donald Trump'],
+        strings: ['es realmente sorprendente'],
         typeSpeed: 40, backSpeed: 50
     });
 }, 14000);

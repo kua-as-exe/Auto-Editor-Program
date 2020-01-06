@@ -12,8 +12,24 @@
 
 #bg {
     padding: 1rem;
-    background-color: rgba(160, 255, 239, 0.527);
-    width: 450px;
-    height: 150px;
+    background-color: rgba(251, 255, 43, 0.527);
+    width: 80%;
+    height: 80%;
     overflow: auto;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px 0px black;
+    margin: 20px;
+}
+
+.s {
+    background-color: green;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+}
+.ss {
+    background-color: rgba(160, 255, 239, 0.384);
+    width: 20px;
+    height: 20px;
+    position: absolute;
 }

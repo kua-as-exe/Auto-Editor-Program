@@ -1,8 +1,12 @@
 {
     "plugins": ["anime.js", "typed.js", "bootstrap"],
     "defParams":{
-        "width": "450px",
-        "height": "150px",
-        "duration": 5
+        "width": "500px",
+        "height": "200px",
+        "duration": 5,
+        "videoPosition": {
+            "x": 10,
+            "y": 10
+        }
     }
 }
