@@ -1,7 +1,7 @@
 export interface VideoElement {
     templateConfig: Template,
     recordConfig?: RecordConfig,
-    videoOutput?: Object
+    videoOutput?: Object | any
 }
 
 export interface Template {
@@ -35,5 +35,4 @@ export interface RecordConfig {
     fps? : number,
     keepFrames? : boolean,
     transparent? :boolean,
-    //timecutConfig?: Object
 }

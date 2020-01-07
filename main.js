@@ -9,41 +9,86 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const TemplateRecorder_1 = require("./src/TemplateRecorder");
-const Templates_1 = require("./src/Templates");
-const path_1 = require("path");
-const util_1 = require("util");
-const processElement = (_element, _dir) => {
-    return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
-        if (util_1.isUndefined(_element))
-            reject("Element its undefined: " + JSON.stringify(_element));
-        let dir = _dir || './recorder';
-        let element = _element;
-        let htmlFile = yield Templates_1.writeTemplate(element.templateConfig);
-        let filename = path_1.basename(htmlFile.fileName || '', '.html');
-        element.recordConfig = {
-            inputUrl: htmlFile.outputUrl || "",
-            outNameFile: path_1.join(dir, filename),
-            duration: htmlFile.params.duration || 3,
-            width: htmlFile.params.width,
-            height: htmlFile.params.height,
-            transparent: true,
-        };
-        element.videoOutput = yield TemplateRecorder_1.recordTemplate(element.recordConfig);
-        resolve(element);
-    }));
-};
+const VideoElement_1 = require("./src/VideoElement");
+const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    processElement({
+    let res1 = yield VideoElement_1.processElement({
         templateConfig: {
-            name: 'simpleText',
+            name: 'title1',
             params: {
-                'text': 'Vamos bien, vamos bien',
-                'duration': 1
+                'title': 'Chocolate',
+                'subtitle': 'Malteada',
+                'duration': 5,
+                'fps': 15,
+                'timeOfset': 2,
+                'positionOfset': {
+                    'x': 50,
+                    'y': 50
+                }
             }
         }
-    }).then((result) => {
-        console.log(result);
+    });
+    let res2 = yield VideoElement_1.processElement({
+        templateConfig: {
+            name: 'title1',
+            params: {
+                'title': 'Snack',
+                'subtitle': 'Hot dog',
+                'duration': 5,
+                'fps': 15,
+                'timeOfset': 10,
+                'positionOfset': {
+                    'x': 200,
+                    'y': 200
+                }
+            }
+        }
+    });
+    console.log(res1);
+    console.log(res2);
+    const mainVideoDir = 'recorder/mainVideo2.mp4';
+    const outVideoDir = 'finalVideo.mp4';
+    const videoElements = [];
+    const filters = [];
+    const duration = 20;
+    const addVideoElement = (element, _inputChannel1, _inputChannel2, _outputChannel) => {
+        //console.log("videoElement", videoElements, "\n channel: ", _outputChannel, "\n")
+        if (element && element.videoOutput.output) {
+            let timeOfset = element.templateConfig.params.timeOfset || 0;
+            let xOfset = element.templateConfig.params.positionOfset.x || 0;
+            let yOfset = element.templateConfig.params.positionOfset.y || 0;
+            let inputChannel1 = _inputChannel1 || 0;
+            let inputChannel2 = _inputChannel2 || 1;
+            let outputChannel = _outputChannel ? `[${_outputChannel}]` : '';
+            videoElements.push(`-itsoffset ${timeOfset} -i ${element.videoOutput.output}`);
+            filters.push(`[${inputChannel1}][${inputChannel2}]overlay=${xOfset}:${yOfset}${outputChannel}`);
+        }
+    };
+    const addVideoElements = (elements) => {
+        let lastOutput;
+        elements.forEach((element, i, array) => {
+            let inChannel1 = lastOutput || '0';
+            let inChannel2 = String(i + 1);
+            let outChannel = (i == elements.length - 1 ? '' : 'out' + (elements.length - 1 - i));
+            addVideoElement(element, inChannel1, inChannel2, outChannel);
+            lastOutput = outChannel;
+        });
+    };
+    addVideoElements([res1, res2]);
+    let videoParams = [
+        ['ffmpeg'],
+        ['-t', duration],
+        ['-i', mainVideoDir],
+        videoElements,
+        ['-filter_complex', '"', filters.join("; "), '"'],
+        ['-y'],
+        [outVideoDir]
+    ];
+    let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
+    child_process_1.exec(ffmpegCommand, (err, stdout) => {
+        if (err)
+            console.error(err);
+        console.log(stdout);
     });
 });
 main();

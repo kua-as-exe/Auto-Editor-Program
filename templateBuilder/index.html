@@ -15,20 +15,28 @@
     background-color: royalblue;
 }
 
-#text{
+#title{
+    font-size: 35px;
+    color: white;
+}
+#subtitle{
     font-size: 20px;
-    font-style: oblique;
+    color:whitesmoke
 }
 
 #bg {
-    padding: 1rem;
-    background-color: rgba(251, 255, 43, 0.527);
-    width: 80%;
-    height: 80%;
-    overflow: auto;
-    border-radius: 10px;
-    box-shadow: 5px 5px 15px 0px black;
-    margin: 20px;
+    padding: 0px;
+    background-color: #51773fcc;
+    width: auto;
+    height: 0%;
+    overflow: hidden;
+    display: grid;
+    align-items: center;
+}
+
+.row{
+    display: block;
+    text-align: center;
 }
 
 .s {
@@ -54,17 +62,11 @@
 
 <div id="bg">
     <div class="row">
-        <div class="square" id="t1"></div>
-        <div class="square" id="t2"></div>
-        <div class="square" id="t3"></div>
-        <div class="square" id="t4"></div>
-        <div class="square" id="t5"></div>
-        <div class="square" id="t6"></div>
+        <span id="title">Ola</span>
     </div>
-    <span id="text"></span>
-    <br>
-    <span id="texto"></span>
-    
+    <div class="row">
+        <span id="subtitle">Ola</span>
+    </div >
 </div>
     
         </main>
@@ -73,56 +75,24 @@
         <script>
     
     "use strict";
-var params = {"width":"500px","height":"200px","duration":5,"videoPosition":{"x":10,"y":10}};
+var params = {"width":"600px","height":"100px","duration":5,"videoPosition":{"x":10,"y":10}};
 const main = document.getElementsByTagName('main')[0];
 if(params.width) main.style.width = params.width;
 if(params.height) main.style.height = params.height;
 console.log(params);
 
-//if(params.text && document.getElementById('texto')) document.getElementById('texto').innerText = params.text
+document.getElementById('title').innerText = params.title || 'Título'
+document.getElementById('subtitle').innerText = params.subtitle || 'Subtítulo'
+anime()
+anime.timeline({
 
-var typed6 = new Typed('#text', {
-    strings: ['^1000','Barnie es un dinosaurio^1000', 'que vive en nuestras mentes^1000', 'cuando se hace grande^1000'],
-    typeSpeed: 40, backSpeed: 50
-});
-setTimeout( ()=>{
-    var typed7 = new Typed('#texto', {
-        strings: ['es realmente sorprendente'],
-        typeSpeed: 40, backSpeed: 50
-    });
-}, 14000);
-
-anime({
+}).add({
     targets: '#bg',
-    width: [0, 450],
+    height: ['0%', '100%'],
+    opacity: [50,100],
     easing: 'easeInOutQuart',
     duration: 2000
 })
-
-anime.timeline({
-    loop: true,
-    autoplay: true,
-}).add({
-    targets: '.square',
-    scale: 1,
-    easing: 'easeInOutQuart',
-    delay: (f,d)=> d*120,
-    duration: 250
-}).add({
-    targets: '.square',
-    scale: 1.2,
-    easing: 'easeInOutQuart',
-    delay: (f,d)=> d*120,
-    duration: 500
-})
-.add({
-    targets: '.square',
-    scale: 1,
-    easing: 'easeInOutQuart',
-    delay: (f,d)=> d*120,
-    duration: 250
-})
-
     
         </script>
         <script src="./builderPageTemplate.js"></script>

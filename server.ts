@@ -1,4 +1,4 @@
-import { writeTemplate } from './src/Templates';
+import { writeTemplate } from './src/VideoElement';
 import { PluginList } from './src/Declarations';
 import { copySync, existsSync, removeSync } from 'fs-extra';
 import { Plugin, Template } from './src/Interfaces';

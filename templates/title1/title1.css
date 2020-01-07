@@ -1,0 +1,43 @@
+.square {
+    width: 20px;
+    height: 20px;
+    margin: 10px;
+    background-color: royalblue;
+}
+
+#title{
+    font-size: 35px;
+    color: white;
+}
+#subtitle{
+    font-size: 20px;
+    color:whitesmoke
+}
+
+#bg {
+    padding: 0px;
+    background-color: #51773fcc;
+    width: auto;
+    height: 0%;
+    overflow: hidden;
+    display: grid;
+    align-items: center;
+}
+
+.row{
+    display: block;
+    text-align: center;
+}
+
+.s {
+    background-color: green;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+}
+.ss {
+    background-color: rgba(160, 255, 239, 0.384);
+    width: 20px;
+    height: 20px;
+    position: absolute;
+}

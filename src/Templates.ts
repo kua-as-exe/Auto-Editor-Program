@@ -1,16 +1,15 @@
 import { readFileSync, writeFileSync, existsSync} from 'fs';
 import { Plugin, Template } from './Interfaces';
 import { PluginList } from './Declarations';
-const mergeJSON = require('merge-json').merge;
 
 let fileNumber = 0;
 
-export function writeTemplate(template: Template): Promise<Template>{
+export function writeTemplate(template: Template){
     const path = `templates/${template.name}/${template.name}`;
     const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
-    const getCSS = ():string => getFile(`${path}.css`) + (template.css || '');
-    const getHTML = ():string => getFile(`${path}.html`) + (template.html || '');
-    const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript || '');
+    const getCSS = ():string => getFile(`${path}.css`) + (template.css? template.css : '');
+    const getHTML = ():string => getFile(`${path}.html`) + (template.html? template.html : '');
+    const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript? template.javascript : '');
     const existPlugin = (plugin: Plugin): boolean | undefined => template.plugins && template.plugins.includes(plugin.name)
     const getJSON = ():Object => existsSync(`${path}.json`)? JSON.parse(readFileSync(`${path}.json`, 'utf8')) : {};
     const appendConfigPlugins = (plugins: string[]) => {
@@ -27,9 +26,9 @@ export function writeTemplate(template: Template): Promise<Template>{
                 .join('\n')
             : '';
 
-    return new Promise<Template>( (resolve, reject) => {
+    return new Promise( (resolve, reject) => {
         if(existsSync(`templates/${template.name}`)) {
-            let mainTemplate: string = getFile(template.customMainTemplate || `templates/mainTemplate.html`);
+            let mainTemplate: string = getFile(`templates/mainTemplate.html`);
             let config: any = getJSON(); 
 
             if(config.plugins) appendConfigPlugins(config.plugins);
@@ -39,14 +38,14 @@ export function writeTemplate(template: Template): Promise<Template>{
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
 
             if(!template.params) template.params = {};
-            template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
+            if(config.width) template.params.width = config.width;
+            if(config.height) template.params.height = config.height;
 
             if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
 
-            const fileName = template.customName || `temp${fileNumber}.html`;
-            const path = template.customPath || 'recorder';
-            template.outputUrl = `${path}/${fileName}`;
-            writeFileSync(template.outputUrl, mainTemplate);
+            const fileName = template.customName? template.customName: `temp${fileNumber}.html`;
+            const path = template.customPath? template.customPath: 'recorder';
+            writeFileSync(`${path}/${fileName}`, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
             fileNumber++;

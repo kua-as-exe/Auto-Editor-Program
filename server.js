@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Templates_1 = require("./src/Templates");
+const VideoElement_1 = require("./src/VideoElement");
 const Declarations_1 = require("./src/Declarations");
 const fs_extra_1 = require("fs-extra");
 var express = require('express');
@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, templateBuilderPath)));
 var server = http.createServer(app);
 const loadPlugin = (plugin) => fs_extra_1.copySync(path.join('./', plugin.src), path.join(templateBuilderPath, plugin.src));
 const refreshFile = () => {
-    return Templates_1.writeTemplate({
+    return VideoElement_1.writeTemplate({
         name: currentTemplate,
         customPath: templateBuilderPath,
         customName: 'index.html',
