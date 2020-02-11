@@ -5,8 +5,12 @@
         "height": "200px",
         "duration": 5,
         "videoPosition": {
-            "x": 10,
-            "y": 10
+            "x": 20,
+            "y": 20
+        },
+        "positionOffset": {
+            "x": 20,
+            "y": 20
         }
     }
 }

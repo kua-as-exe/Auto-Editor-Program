@@ -2,99 +2,128 @@
 
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 <script src="../node_modules/animejs/lib/anime.min.js"></script>
-<script src="../node_modules/typed.js/lib/typed.min.js"></script>
     <link rel="stylesheet" href="./builderPageTemplate.css">
     </head><body>
 
         <style>
             
-    .square {
-    width: 20px;
-    height: 20px;
-    margin: 10px;
-    background-color: royalblue;
+    #back {
+    width: 100%;
+    height: 100%;
+    background-color: #108dbea2;
+    padding: 2%;
+    display: inline-grid;
 }
 
-#title{
-    font-size: 35px;
-    color: white;
-}
-#subtitle{
-    font-size: 20px;
-    color:whitesmoke
+span{
+    color: whitesmoke;
 }
 
-#bg {
-    padding: 0px;
-    background-color: #51773fcc;
-    width: auto;
-    height: 0%;
+#subtext {
+    font-size: 5vw;
     overflow: hidden;
-    display: grid;
-    align-items: center;
-}
-
-.row{
-    display: block;
+    width: 0%;
     text-align: center;
 }
 
-.s {
-    background-color: green;
-    width: 10px;
-    height: 10px;
-    position: absolute;
+#text {
+    font-size: 8vw;
+    text-align: center;
+    overflow: hidden;
+    font-weight: bold;
+    width: 0%;
 }
-.ss {
-    background-color: rgba(160, 255, 239, 0.384);
-    width: 20px;
-    height: 20px;
-    position: absolute;
-}
+
 
         </style>
-    
-    <container>
-        <main>
-    
-    <div class="s"></div>
-<div class="ss"></div>
+    <viewer>
+        <visualizer class="">
+            <tools>
+                <div class="scale">
+                    <input id="scale-range" type='range' value='0' min='1' max='50' />
+                </div>
+            </tools>
+            <renderer>
 
-<div id="bg">
-    <div class="row">
-        <span id="title">Ola</span>
-    </div>
-    <div class="row">
-        <span id="subtitle">Ola</span>
-    </div >
+                <screen></screen>
+
+                <container>
+                    <div id="x">
+                        <span>200px</span>
+                        <div class="a"></div>
+                        <div class="b"></div>
+                        <div class="c"></div>
+                    </div>
+                    <div id="y">
+                        <span>200px</span>
+                        <div class="a"></div>
+                        <div class="b"></div>
+                        <div class="c"></div>
+                    </div>
+
+                    <main>
+                <div id="back">
+    <span id="text"></span>
+    <span id="subtext"></span>
 </div>
+                    </main>
+                </container> 
+            </renderer>
+        </visualizer>
+    </viewer>
+
+    <editer>
+
+        <content class="shadow-black">
+
+            <div>
+
+                <p>Plantilla:</p>
+                <h1 id="templateTitle">Hi</h1>
+                <p>s</p>
+                
+            </div>
+
+        </content>
+
+    </editer>
     
-        </main>
-    </container>    
         <script src="/reload/reload.js"></script>
+        
         <script>
-    
-    "use strict";
-var params = {"width":"600px","height":"100px","duration":5,"videoPosition":{"x":10,"y":10}};
-const main = document.getElementsByTagName('main')[0];
-if(params.width) main.style.width = params.width;
-if(params.height) main.style.height = params.height;
-console.log(params);
+            
+            var params = {"templateName":"anotation1","width":"600px","height":"150px","duration":10,"videoPosition":{"x":60,"y":200}};
+            const main = document.getElementsByTagName('main')[0];
+            if(params.width) main.style.width = params.width;
+            if(params.height) main.style.height = params.height;
 
-document.getElementById('title').innerText = params.title || 'Título'
-document.getElementById('subtitle').innerText = params.subtitle || 'Subtítulo'
-anime()
+            document.getElementById('text').innerText = params.text || 'Texto'
+document.getElementById('subtext').innerText = params.subtext || 'Subtexto'
+
 anime.timeline({
-
+    loop: false, autoplay: true,
 }).add({
-    targets: '#bg',
+    targets: "#back",
     height: ['0%', '100%'],
-    opacity: [50,100],
+    opacity: ['0%', '100%'],
     easing: 'easeInOutQuart',
-    duration: 2000
+    duration: 1500
+}).add({
+    targets: "#text",
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1500
+}).add({
+    targets: "#subtext",
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1500
 })
-    
-        </script>
+            
+            </script>
+
         <script src="./builderPageTemplate.js"></script>
-    
+
     </body></html>

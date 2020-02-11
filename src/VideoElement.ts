@@ -43,8 +43,9 @@ export const writeTemplate = (template: Template): Promise<Template> => {
 
             if(!template.params) template.params = {};
             template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
-
-            if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
+            template.params = mergeJSON({'templateName': template.name }, template.params);//añade el nombre de la plantilla como parámetro
+            
+            if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params)); 
 
             const fileName = template.customName || `temp${fileNumber}.html`;
             const path = template.customPath || 'recorder';

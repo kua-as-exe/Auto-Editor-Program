@@ -14,54 +14,56 @@ const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     let res1 = yield VideoElement_1.processElement({
         templateConfig: {
-            name: 'title1',
+            name: 'simpleText',
             params: {
                 'title': 'Chocolate',
                 'subtitle': 'Malteada',
                 'duration': 5,
                 'fps': 15,
-                'timeOfset': 2,
-                'positionOfset': {
-                    'x': 50,
-                    'y': 50
-                }
+                'startTime': 2,
+                'timeOffset': 1,
+                'videoPosition': {
+                    'x': 0,
+                    'y': 0
+                },
             }
         }
     });
     let res2 = yield VideoElement_1.processElement({
         templateConfig: {
-            name: 'title1',
+            name: 'anotation1',
             params: {
-                'title': 'Snack',
-                'subtitle': 'Hot dog',
-                'duration': 5,
-                'fps': 15,
-                'timeOfset': 10,
-                'positionOfset': {
-                    'x': 200,
-                    'y': 200
-                }
+                'text': 'A & S',
+                'subtext': 'Fine guitars',
+                'duration': 8,
+                'startTime': 2,
             }
         }
     });
     console.log(res1);
     console.log(res2);
-    const mainVideoDir = 'recorder/mainVideo2.mp4';
+    const mainVideoDir = 'recorder/mainVideo.mp4';
     const outVideoDir = 'finalVideo.mp4';
     const videoElements = [];
     const filters = [];
-    const duration = 20;
+    const duration = 15;
     const addVideoElement = (element, _inputChannel1, _inputChannel2, _outputChannel) => {
         //console.log("videoElement", videoElements, "\n channel: ", _outputChannel, "\n")
         if (element && element.videoOutput.output) {
-            let timeOfset = element.templateConfig.params.timeOfset || 0;
-            let xOfset = element.templateConfig.params.positionOfset.x || 0;
-            let yOfset = element.templateConfig.params.positionOfset.y || 0;
+            let startTime = element.templateConfig.params.startTime || 0;
+            startTime -= element.templateConfig.params.timeOffset || 0;
+            let xPosition = element.templateConfig.params.videoPosition.x || 0;
+            let yPosition = element.templateConfig.params.videoPosition.y || 0;
+            var offsets = element.templateConfig.params.positionOffset;
+            if (offsets)
+                xPosition -= offsets.x || 0;
+            if (offsets)
+                yPosition -= offsets.y || 0;
             let inputChannel1 = _inputChannel1 || 0;
             let inputChannel2 = _inputChannel2 || 1;
             let outputChannel = _outputChannel ? `[${_outputChannel}]` : '';
-            videoElements.push(`-itsoffset ${timeOfset} -i ${element.videoOutput.output}`);
-            filters.push(`[${inputChannel1}][${inputChannel2}]overlay=${xOfset}:${yOfset}${outputChannel}`);
+            videoElements.push(`-itsoffset ${startTime} -i ${element.videoOutput.output}`);
+            filters.push(`[${inputChannel1}][${inputChannel2}]overlay=${xPosition}:${yPosition}${outputChannel}`);
         }
     };
     const addVideoElements = (elements) => {

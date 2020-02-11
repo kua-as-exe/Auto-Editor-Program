@@ -9,20 +9,68 @@
     /*STYLES*/
 
         </style>
+    <viewer>
+        <visualizer class="">
+            <tools>
+                <div class="scale">
+                    <input id="scale-range" type='range' value='0' min='1' max='50' />
+                </div>
+            </tools>
+            <renderer>
+
+                <screen></screen>
+
+                <container>
+                    <div id="x">
+                        <span>200px</span>
+                        <div class="a"></div>
+                        <div class="b"></div>
+                        <div class="c"></div>
+                    </div>
+                    <div id="y">
+                        <span>200px</span>
+                        <div class="a"></div>
+                        <div class="b"></div>
+                        <div class="c"></div>
+                    </div>
+
+                    <main>
+                <!--HTML-->
+                    </main>
+                </container> 
+            </renderer>
+        </visualizer>
+    </viewer>
+
+    <editer>
+
+        <content class="shadow-black">
+
+            <div>
+
+                <p>Plantilla:</p>
+                <h1 id="templateTitle">Hi</h1>
+                <p>s</p>
+                
+            </div>
+
+        </content>
+
+    </editer>
     
-    <container>
-        <main>
-    
-    <!--HTML-->
-    
-        </main>
-    </container>    
         <script src="/reload/reload.js"></script>
+        
         <script>
-    
-    /*SCRIPTS*/
-    
-        </script>
+            
+            var params = { /*PARAMS*/};
+            const main = document.getElementsByTagName('main')[0];
+            if(params.width) main.style.width = params.width;
+            if(params.height) main.style.height = params.height;
+
+            /*SCRIPTS*/
+            
+            </script>
+
         <script src="./builderPageTemplate.js"></script>
-    
+
     </body></html>

@@ -5,6 +5,10 @@
         "height": "100px",
         "duration": 5,
         "videoPosition": {
+            "x": 40,
+            "y": 40
+        },
+        "positionOffset":{
             "x": 10,
             "y": 10
         }
