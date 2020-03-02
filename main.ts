@@ -10,7 +10,7 @@ const main = async () => {
             params: {
                 'title': 'Chocolate',
                 'subtitle': 'Malteada',
-                'duration': 5,
+                'duration': 1,
                 'fps': 15,
                 'startTime': 2,
                 'timeOffset': 1,
@@ -27,7 +27,7 @@ const main = async () => {
             params: {
                 'text': 'A & S',
                 'subtext': 'Fine guitars',
-                'duration': 8,
+                'duration': 1,
                 'startTime': 2,
             }
         }
@@ -87,10 +87,10 @@ const main = async () => {
 
     let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
     
-    exec(ffmpegCommand, (err, stdout) => {
+    /*exec(ffmpegCommand, (err, stdout) => {
         if(err) console.error(err);
         console.log(stdout);
-    })
+    })*/
     
 }
 

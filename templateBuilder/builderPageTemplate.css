@@ -15,7 +15,9 @@ container{
     background: #ffffff;
     border-radius: 3px;
     position: relative;
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 0s;
 }
+
 viewer{
     height: 100%;
     width: auto;

@@ -4,7 +4,7 @@
         "width": "600px",
         "height": "100px",
         "duration": 5,
-        "videoPosition": {
+        "elementPosition": {
             "x": 40,
             "y": 40
         },

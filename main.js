@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const VideoElement_1 = require("./src/VideoElement");
-const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     let res1 = yield VideoElement_1.processElement({
         templateConfig: {
@@ -18,7 +17,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             params: {
                 'title': 'Chocolate',
                 'subtitle': 'Malteada',
-                'duration': 5,
+                'duration': 1,
                 'fps': 15,
                 'startTime': 2,
                 'timeOffset': 1,
@@ -35,7 +34,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             params: {
                 'text': 'A & S',
                 'subtext': 'Fine guitars',
-                'duration': 8,
+                'duration': 1,
                 'startTime': 2,
             }
         }
@@ -87,10 +86,9 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         [outVideoDir]
     ];
     let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
-    child_process_1.exec(ffmpegCommand, (err, stdout) => {
-        if (err)
-            console.error(err);
+    /*exec(ffmpegCommand, (err, stdout) => {
+        if(err) console.error(err);
         console.log(stdout);
-    });
+    })*/
 });
 main();

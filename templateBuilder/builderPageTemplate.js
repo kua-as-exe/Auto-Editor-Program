@@ -1,4 +1,7 @@
 
+var percent = (v, p) => v*p/100;
+
+
 console.log(params);
 console.log("Builder Page Working..");
 params.screenSize = {
@@ -6,12 +9,18 @@ params.screenSize = {
     height: 720
 }
 
-function changeSize( width, height){
-    if(String(width).indexOf("px") != -1) width = width.slice(0, params.width.indexOf("px"))
-    if(String(height).indexOf("px") != -1) height = height.slice(0, params.height.indexOf("px"))
+function removePx(m){
+    const px = String(m).indexOf("px");
+    if(px != -1) return Number(m.slice(0, px));
+    return Number(m);
+}
 
-    main.style.width = width + 'px'
-    main.style.height = height + 'px'
+function changeSize( width, height){
+    width = removePx(width);
+    height = removePx(height);
+
+    main.style.width = width + 'px';
+    main.style.height = height + 'px';
     
     const x = document.getElementById("x"); 
     if(x){
@@ -29,8 +38,39 @@ function changeSize( width, height){
 
 }
 
+function refreshPosition(){
+    var y = (-params.screenSize.height + removePx(main.style.height))/2;
+    var x = (-params.screenSize.width + removePx(main.style.width))/2;
+    y += params.elementPosition.y || 0;
+    x += params.elementPosition.x || 0;
+    
+    container = document.getElementsByTagName("container")[0]
+    container.style.transform = `translate(${x}px, ${y}px)`;
+}
+refreshPosition()
+
+function changePosition(width, height){
+    params.elementPosition.x = width;
+    params.elementPosition.y = height;
+    refreshPosition();
+}
+
 const renderer = document.querySelector("renderer");
-const changeScale = (scale) => renderer.style.transform = `scale(${scale})`;
+
+var rendererScale = 0
+const changeScale = (scale) => {
+    rendererScale = scale;
+    renderer.style.transform = `scale(${scale})`;
+}
+
+const autoScale = () => {
+    var visualizer = document.getElementsByTagName("visualizer")[0]
+    var x = screenVisualizer.scrollWidth / visualizer.scrollHeight
+    var y = params.screenSize.width / params.screenSize.height
+    var c = 0.9;
+    var s = (y/x)*c
+    changeScale(s); 
+}
 
 const convertRange = ( value, r1, r2 ) => ( value - r1[ 0 ] ) * ( r2[ 1 ] - r2[ 0 ] ) / ( r1[ 1 ] - r1[ 0 ] ) + r2[ 0 ];
 const scaleRange = document.getElementById("scale-range");
@@ -69,5 +109,5 @@ if(screenVisualizer && params.screenSize) {
 
 setTimeout(()=>{
     changeSize(params.width, params.height);
-    changeScale(0.3);
+    autoScale();
 }, 0);
