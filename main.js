@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const ElementProcessor_1 = require("./src/ElementProcessor");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const ep = new ElementProcessor_1.ElementProcessor(1);
+    const ep = new ElementProcessor_1.ElementProcessor(0);
     ep.add({
         templateConfig: {
             name: 'simpleText',
             params: {
                 'title': 'Chocolate',
                 'subtitle': 'Malteada',
-                'duration': 3,
+                'duration': 1,
                 'fps': 15,
                 'startTime': 2,
                 'timeOffset': 1,
@@ -35,7 +35,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             params: {
                 'text': 'A & S',
                 'subtext': 'Fine guitars',
-                'duration': 3,
+                'duration': 1,
                 'startTime': 2,
             }
         }
@@ -44,7 +44,6 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(res);
 });
 main();
-console.log("Done 3");
 /*
 const main = async () => {
 

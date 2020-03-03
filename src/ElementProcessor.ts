@@ -1,5 +1,6 @@
 import { processElement } from "./VideoElement";
-import { VideoElement } from "./Interfaces";
+import { VideoElement, ElementConfig } from "./Interfaces";
+import { join } from "path";
 
 async function asyncForEach(array: any[], callback: Function) {
     for (let index = 0; index < array.length; index++) {
@@ -9,11 +10,19 @@ async function asyncForEach(array: any[], callback: Function) {
 
 export class ElementProcessor {
     id:number;
-    path: string;
+    mainPath: string = "processors";
+    customPath: string;
     elements: VideoElement[] = [];
-    constructor(id: number, config?: any){
+    preserveProccess: boolean = false;
+    log: boolean = false;
+    constructor(id: number, config?: ElementConfig){
         this.id = id;
-        this.path = (config && config.path) || `processor_${id}`;
+        this.customPath = `processor_${id}`;
+        if(config){
+            this.customPath = config.customDir || this.customPath;
+            this.preserveProccess = config.preserveProccess || false;
+            this.log = config.log || false;
+        }
     }
 
     add = (videoElement: VideoElement) => {
@@ -24,7 +33,12 @@ export class ElementProcessor {
     processElements = () => new Promise<VideoElement[]>( async (resolve, reject) => {
         let processedElements: VideoElement[] = [];
         await asyncForEach(this.elements, async (videoElement: VideoElement)=>{
-            processedElements.push(await processElement(videoElement));
+            var e = await processElement(videoElement, {
+                customDir: join(this.mainPath, this.customPath),
+                preserveProccess: this.preserveProccess,
+                log: this.log
+            });
+            processedElements.push(e);
         });
         resolve(processedElements);
     })

@@ -1,5 +1,5 @@
 import { Template, VideoElement, Plugin, ElementConfig } from './Interfaces';
-import { readFileSync, writeFileSync, existsSync} from 'fs';
+import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync} from 'fs';
 import { RecordConfig } from "./Interfaces";
 import { PluginList } from './Declarations';
 import { basename, join } from 'path';
@@ -21,7 +21,7 @@ const spinnerText = (text: string) => {
         `${prefixText} ${cyan('[')} ${yellow(text)} ${cyan(']')}`;
 }
 
-export const writeTemplate = (template: Template): Promise<Template> => {
+export const writeTemplate = (template: Template, customDir?: string): Promise<Template> => {
     spinnerText("Writing HTML");
     const path = join('templates',template.name,template.name);
     const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
@@ -97,8 +97,12 @@ export const recordTemplate = async (config: RecordConfig, log?: boolean): Promi
     }
 
     return new Promise( (resolve, reject) => {
+        
         timecut(options)
-        .then( () => resolve(options))
+        .then( () => {
+            if(config && !config.keepFrames) unlinkSync(config.inputUrl);
+            resolve(options)
+        })
         .catch( (err: any) => reject(err));
     });
 };
@@ -106,9 +110,17 @@ export const recordTemplate = async (config: RecordConfig, log?: boolean): Promi
 export const processElement = (_element: VideoElement, config?: ElementConfig): Promise<VideoElement> => {
     spinner.start(); prefixText = `${cyan(_element.templateConfig.name)}`;
     return new Promise ( async (resolve, reject ) => {
-        if(isUndefined(_element)) reject("Element its undefined: "+ JSON.stringify(_element));
-        let dir = config && config.customDir || 'recorder';
         let element: VideoElement = _element;
+
+        if(isUndefined(_element)) reject("Element its undefined: "+ JSON.stringify(_element));
+        let dir = 'recorder';
+        if(config && config.customDir) {
+            dir = join(config.customDir,dir);
+            element.templateConfig.customPath = dir;
+        }
+
+        if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
+
         let htmlFile: Template = await writeTemplate(element.templateConfig);
         let filename = basename(htmlFile.fileName || '', '.html');
 
@@ -123,6 +135,7 @@ export const processElement = (_element: VideoElement, config?: ElementConfig): 
         };
 
         const log = config && config.log || false;
+        if(config && config.preserveProccess) element.recordConfig.keepFrames = config.preserveProccess
         element.videoOutput = await recordTemplate(element.recordConfig, log);
         spinnerText('Done'); 
         spinner.succeed(`Template proccessed: ${green(element.templateConfig.name)}`)

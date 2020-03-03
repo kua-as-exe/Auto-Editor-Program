@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const VideoElement_1 = require("./VideoElement");
+const path_1 = require("path");
 function asyncForEach(array, callback) {
     return __awaiter(this, void 0, void 0, function* () {
         for (let index = 0; index < array.length; index++) {
@@ -19,7 +20,10 @@ function asyncForEach(array, callback) {
 }
 class ElementProcessor {
     constructor(id, config) {
+        this.mainPath = "processors";
         this.elements = [];
+        this.preserveProccess = false;
+        this.log = false;
         this.add = (videoElement) => {
             videoElement.id = this.elements.length;
             this.elements.push(videoElement);
@@ -27,12 +31,22 @@ class ElementProcessor {
         this.processElements = () => new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let processedElements = [];
             yield asyncForEach(this.elements, (videoElement) => __awaiter(this, void 0, void 0, function* () {
-                processedElements.push(yield VideoElement_1.processElement(videoElement));
+                var e = yield VideoElement_1.processElement(videoElement, {
+                    customDir: path_1.join(this.mainPath, this.customPath),
+                    preserveProccess: this.preserveProccess,
+                    log: this.log
+                });
+                processedElements.push(e);
             }));
             resolve(processedElements);
         }));
         this.id = id;
-        this.path = (config && config.path) || `processor_${id}`;
+        this.customPath = `processor_${id}`;
+        if (config) {
+            this.customPath = config.customDir || this.customPath;
+            this.preserveProccess = config.preserveProccess || false;
+            this.log = config.log || false;
+        }
     }
 }
 exports.ElementProcessor = ElementProcessor;

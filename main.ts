@@ -5,7 +5,7 @@ import { VideoElement } from "./src/Interfaces";
 import { ElementProcessor } from './src/ElementProcessor';
 
 const main = async () => {
-    const ep = new ElementProcessor(1);
+    const ep = new ElementProcessor(0);
 
     ep.add({
         templateConfig: {
@@ -13,7 +13,7 @@ const main = async () => {
             params: {
                 'title': 'Chocolate',
                 'subtitle': 'Malteada',
-                'duration': 3,
+                'duration': 1,
                 'fps': 15,
                 'startTime': 2,
                 'timeOffset': 1,
@@ -30,7 +30,7 @@ const main = async () => {
             params: {
                 'text': 'A & S',
                 'subtext': 'Fine guitars',
-                'duration': 3,
+                'duration': 1,
                 'startTime': 2,
             }
         }
@@ -41,7 +41,6 @@ const main = async () => {
 }
 
 main();
-console.log("Done 3");
 /*
 const main = async () => {
 

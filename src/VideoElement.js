@@ -27,7 +27,7 @@ const spinnerText = (text) => {
     spinner.prefixText =
         `${prefixText} ${chalk_1.cyan('[')} ${chalk_1.yellow(text)} ${chalk_1.cyan(']')}`;
 };
-exports.writeTemplate = (template) => {
+exports.writeTemplate = (template, customDir) => {
     spinnerText("Writing HTML");
     const path = path_1.join('templates', template.name, template.name);
     const getFile = (path) => fs_1.existsSync(path) ? fs_1.readFileSync(path, 'utf8') : '';
@@ -101,7 +101,11 @@ exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, func
     }
     return new Promise((resolve, reject) => {
         timecut(options)
-            .then(() => resolve(options))
+            .then(() => {
+            if (config && !config.keepFrames)
+                fs_1.unlinkSync(config.inputUrl);
+            resolve(options);
+        })
             .catch((err) => reject(err));
     });
 });
@@ -109,10 +113,16 @@ exports.processElement = (_element, config) => {
     spinner.start();
     prefixText = `${chalk_1.cyan(_element.templateConfig.name)}`;
     return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
+        let element = _element;
         if (util_1.isUndefined(_element))
             reject("Element its undefined: " + JSON.stringify(_element));
-        let dir = config && config.customDir || 'recorder';
-        let element = _element;
+        let dir = 'recorder';
+        if (config && config.customDir) {
+            dir = path_1.join(config.customDir, dir);
+            element.templateConfig.customPath = dir;
+        }
+        if (dir && !fs_1.existsSync(dir))
+            fs_1.mkdirSync(dir, { recursive: true }); // create path if dont exists
         let htmlFile = yield exports.writeTemplate(element.templateConfig);
         let filename = path_1.basename(htmlFile.fileName || '', '.html');
         element.recordConfig = {
@@ -125,6 +135,8 @@ exports.processElement = (_element, config) => {
             transparent: true,
         };
         const log = config && config.log || false;
+        if (config && config.preserveProccess)
+            element.recordConfig.keepFrames = config.preserveProccess;
         element.videoOutput = yield exports.recordTemplate(element.recordConfig, log);
         spinnerText('Done');
         spinner.succeed(`Template proccessed: ${chalk_1.green(element.templateConfig.name)}`);

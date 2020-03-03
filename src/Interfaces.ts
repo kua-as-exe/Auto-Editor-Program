@@ -8,7 +8,8 @@ export interface VideoElement {
 export interface ElementConfig {
     customDir?: string,
     relativePath?: string,
-    log?: boolean
+    log?: boolean,
+    preserveProccess?: boolean
 }
 
 export interface Template {
