@@ -8,16 +8,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs_1 = require("fs");
 const Declarations_1 = require("./Declarations");
 const path_1 = require("path");
 const util_1 = require("util");
-const mergeJSON = require('merge-json').merge;
+const chalk_1 = require("chalk");
 const timecut = require('timecut');
+const mergeJSON = require('merge-json').merge;
+const ora_1 = __importDefault(require("ora"));
 let fileNumber = 0;
+const spinner = ora_1.default();
+let prefixText = '';
+const spinnerText = (text) => {
+    spinner.prefixText =
+        `${prefixText} ${chalk_1.cyan('[')} ${chalk_1.yellow(text)} ${chalk_1.cyan(']')}`;
+};
 exports.writeTemplate = (template) => {
-    const path = `templates/${template.name}/${template.name}`;
+    spinnerText("Writing HTML");
+    const path = path_1.join('templates', template.name, template.name);
     const getFile = (path) => fs_1.existsSync(path) ? fs_1.readFileSync(path, 'utf8') : '';
     const getCSS = () => getFile(`${path}.css`) + (template.css || '');
     const getHTML = () => getFile(`${path}.html`) + (template.html || '');
@@ -64,7 +76,8 @@ exports.writeTemplate = (template) => {
             reject('template not found: ' + template.name);
     });
 };
-exports.recordTemplate = (config) => __awaiter(void 0, void 0, void 0, function* () {
+exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, function* () {
+    spinnerText("Recording");
     if (util_1.isUndefined(config.transparent))
         config.transparent = false;
     const getOutputFile = () => config.outNameFile + (config.transparent ? '.avi' : '.mp4');
@@ -79,6 +92,7 @@ exports.recordTemplate = (config) => __awaiter(void 0, void 0, void 0, function*
         duration: config.duration,
         keepFrames: config.keepFrames || false,
         output: getOutputFile(),
+        quiet: !log || false
     };
     if (config.transparent) {
         options.outputOptions = ['-vcodec', 'ffvhuff'];
@@ -91,11 +105,13 @@ exports.recordTemplate = (config) => __awaiter(void 0, void 0, void 0, function*
             .catch((err) => reject(err));
     });
 });
-exports.processElement = (_element, _dir) => {
+exports.processElement = (_element, config) => {
+    spinner.start();
+    prefixText = `${chalk_1.cyan(_element.templateConfig.name)}`;
     return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
         if (util_1.isUndefined(_element))
             reject("Element its undefined: " + JSON.stringify(_element));
-        let dir = _dir || './recorder';
+        let dir = config && config.customDir || 'recorder';
         let element = _element;
         let htmlFile = yield exports.writeTemplate(element.templateConfig);
         let filename = path_1.basename(htmlFile.fileName || '', '.html');
@@ -108,7 +124,10 @@ exports.processElement = (_element, _dir) => {
             height: htmlFile.params.height,
             transparent: true,
         };
-        element.videoOutput = yield exports.recordTemplate(element.recordConfig);
+        const log = config && config.log || false;
+        element.videoOutput = yield exports.recordTemplate(element.recordConfig, log);
+        spinnerText('Done');
+        spinner.succeed(`Template proccessed: ${chalk_1.green(element.templateConfig.name)}`);
         resolve(element);
     }));
 };

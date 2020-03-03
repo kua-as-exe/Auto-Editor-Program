@@ -2,15 +2,18 @@ import { processElement } from "./src/VideoElement";
 import { exec } from 'child_process';
 import { VideoElement } from "./src/Interfaces";
 
-const main = async () => {
+import { ElementProcessor } from './src/ElementProcessor';
 
-    let res1:VideoElement = await processElement({
+const main = async () => {
+    const ep = new ElementProcessor(1);
+
+    ep.add({
         templateConfig: {
             name: 'simpleText', 
             params: {
                 'title': 'Chocolate',
                 'subtitle': 'Malteada',
-                'duration': 1,
+                'duration': 3,
                 'fps': 15,
                 'startTime': 2,
                 'timeOffset': 1,
@@ -21,19 +24,60 @@ const main = async () => {
             }
         }
     })
+    ep.add({
+        templateConfig: {
+            name: 'anotation1', 
+            params: {
+                'text': 'A & S',
+                'subtext': 'Fine guitars',
+                'duration': 3,
+                'startTime': 2,
+            }
+        }
+    })
+
+    const res = await ep.processElements();
+    console.log(res);
+}
+
+main();
+console.log("Done 3");
+/*
+const main = async () => {
+
+    let relativePath = '../s';
+    let log = false;
+
+    let res1:VideoElement = await processElement({
+        templateConfig: {
+            name: 'simpleText', 
+            params: {
+                'title': 'Chocolate',
+                'subtitle': 'Malteada',
+                'duration': 3,
+                'fps': 15,
+                'startTime': 2,
+                'timeOffset': 1,
+                'videoPosition':{
+                    'x': 0,
+                    'y': 0
+                },
+            }
+        }
+    }, { log: log, relativePath: relativePath})
     let res2:VideoElement = await processElement({
         templateConfig: {
             name: 'anotation1', 
             params: {
                 'text': 'A & S',
                 'subtext': 'Fine guitars',
-                'duration': 1,
+                'duration': 3,
                 'startTime': 2,
             }
         }
-    })
-    console.log(res1);
-    console.log(res2);
+    }, { log: log, relativePath: relativePath})
+    //console.log(res2);
+    //console.log(res1);
     
     const mainVideoDir = 'recorder/mainVideo.mp4';
     const outVideoDir = 'finalVideo.mp4';
@@ -47,8 +91,8 @@ const main = async () => {
             let startTime = element.templateConfig.params.startTime || 0;
             startTime -= element.templateConfig.params.timeOffset || 0;
 
-            let xPosition = element.templateConfig.params.videoPosition.x || 0;
-            let yPosition = element.templateConfig.params.videoPosition.y || 0;
+            let xPosition = element.templateConfig.params.videoPosition && element.templateConfig.params.videoPosition.x || 0;
+            let yPosition = element.templateConfig.params.videoPosition && element.templateConfig.params.videoPosition.y || 0;
             
             var offsets = element.templateConfig.params.positionOffset;
             if(offsets) xPosition -= offsets.x || 0;
@@ -87,11 +131,11 @@ const main = async () => {
 
     let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
     
-    /*exec(ffmpegCommand, (err, stdout) => {
+    //console.log(ffmpegCommand);
+
+    exec(ffmpegCommand, (err, stdout) => {
         if(err) console.error(err);
         console.log(stdout);
-    })*/
+    })
     
-}
-
-main();
+}*/

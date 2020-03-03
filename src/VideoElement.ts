@@ -1,15 +1,29 @@
-import { Template, VideoElement, Plugin } from './Interfaces';
+import { Template, VideoElement, Plugin, ElementConfig } from './Interfaces';
 import { readFileSync, writeFileSync, existsSync} from 'fs';
 import { RecordConfig } from "./Interfaces";
 import { PluginList } from './Declarations';
 import { basename, join } from 'path';
 import { isUndefined } from 'util';
-const mergeJSON = require('merge-json').merge;
+import { red, cyan, green, yellow, white, magenta} from 'chalk';
+
 const timecut = require('timecut');
+const mergeJSON = require('merge-json').merge;
+import Ora from 'ora';
+
+
 
 let fileNumber = 0;
+const spinner = Ora();
+let prefixText = '';
+
+const spinnerText = (text: string) => {
+    spinner.prefixText = 
+        `${prefixText} ${cyan('[')} ${yellow(text)} ${cyan(']')}`;
+}
+
 export const writeTemplate = (template: Template): Promise<Template> => {
-    const path = `templates/${template.name}/${template.name}`;
+    spinnerText("Writing HTML");
+    const path = join('templates',template.name,template.name);
     const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
     const getCSS = ():string => getFile(`${path}.css`) + (template.css || '');
     const getHTML = ():string => getFile(`${path}.html`) + (template.html || '');
@@ -59,9 +73,10 @@ export const writeTemplate = (template: Template): Promise<Template> => {
     })
 }
 
-export const recordTemplate = async (config: RecordConfig): Promise<any> => {
+export const recordTemplate = async (config: RecordConfig, log?: boolean): Promise<any> => {
+    spinnerText("Recording");
     if(isUndefined(config.transparent)) config.transparent = false;
-    const getOutputFile = ()=> config.outNameFile + (config.transparent? '.avi': '.mp4');
+    const getOutputFile = () => config.outNameFile + (config.transparent? '.avi': '.mp4');
     if(typeof config.width == 'string') config.width = Number(String(config.width).replace('px', ''));
     if(typeof config.height == 'string') config.height = Number(String(config.height).replace('px', ''));
 
@@ -72,6 +87,7 @@ export const recordTemplate = async (config: RecordConfig): Promise<any> => {
         duration: config.duration, 
         keepFrames: config.keepFrames || false,
         output: getOutputFile(),
+        quiet: !log || false
     };
 
     if(config.transparent) {
@@ -83,15 +99,15 @@ export const recordTemplate = async (config: RecordConfig): Promise<any> => {
     return new Promise( (resolve, reject) => {
         timecut(options)
         .then( () => resolve(options))
-        .catch( (err: any) => reject(err))
+        .catch( (err: any) => reject(err));
     });
 };
 
-export const processElement = (_element: VideoElement, _dir?: string): Promise<any> => {
-
+export const processElement = (_element: VideoElement, config?: ElementConfig): Promise<VideoElement> => {
+    spinner.start(); prefixText = `${cyan(_element.templateConfig.name)}`;
     return new Promise ( async (resolve, reject ) => {
-        if(isUndefined(_element)) reject("Element its undefined: "+ JSON.stringify(_element))
-        let dir = _dir || './recorder';
+        if(isUndefined(_element)) reject("Element its undefined: "+ JSON.stringify(_element));
+        let dir = config && config.customDir || 'recorder';
         let element: VideoElement = _element;
         let htmlFile: Template = await writeTemplate(element.templateConfig);
         let filename = basename(htmlFile.fileName || '', '.html');
@@ -104,9 +120,12 @@ export const processElement = (_element: VideoElement, _dir?: string): Promise<a
             width: htmlFile.params.width,
             height: htmlFile.params.height,
             transparent: true,
-        }
+        };
 
-        element.videoOutput = await recordTemplate(element.recordConfig)
-        resolve(element)
+        const log = config && config.log || false;
+        element.videoOutput = await recordTemplate(element.recordConfig, log);
+        spinnerText('Done'); 
+        spinner.succeed(`Template proccessed: ${green(element.templateConfig.name)}`)
+        resolve(element);
     })
 }

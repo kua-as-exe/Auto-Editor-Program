@@ -1,7 +1,14 @@
 export interface VideoElement {
     templateConfig: Template,
     recordConfig?: RecordConfig,
-    videoOutput?: Object | any
+    videoOutput?: Object | any,
+    id?:number
+}
+
+export interface ElementConfig {
+    customDir?: string,
+    relativePath?: string,
+    log?: boolean
 }
 
 export interface Template {
