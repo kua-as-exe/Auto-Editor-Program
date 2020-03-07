@@ -1,10 +1,8 @@
-import { Template, VideoElement, Plugin, ElementConfig } from './Interfaces';
-import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync} from 'fs';
-import { RecordConfig } from "./Interfaces";
-import { PluginList } from './Declarations';
+import { ITemplate, IVideoElement, IElementConfig, IRecordConfig } from './Interfaces';
+import { getJSON, getFile, pluginsUtilities, getOrCreateDir, Color} from './Utilities';
+import {  writeFileSync, existsSync, unlinkSync} from 'fs';
 import { basename, join } from 'path';
 import { isUndefined } from 'util';
-import { red, cyan, green, yellow, white, magenta} from 'chalk';
 
 const timecut = require('timecut');
 const mergeJSON = require('merge-json').merge;
@@ -18,39 +16,29 @@ let prefixText = '';
 
 const spinnerText = (text: string) => {
     spinner.prefixText = 
-        `${prefixText} ${cyan('[')} ${yellow(text)} ${cyan(']')}`;
+        `${prefixText} ${Color.cyan('[')} ${Color.yellow(text)} ${Color.cyan(']')}`;
 }
 
-export const writeTemplate = (template: Template, customDir?: string): Promise<Template> => {
+export const writeTemplate = (template: ITemplate, customDir?: string): Promise<ITemplate> => {
     spinnerText("Writing HTML");
     const path = join('templates',template.name,template.name);
-    const getFile = (path: string):string => existsSync(path)? readFileSync(path, 'utf8'): '';
     const getCSS = ():string => getFile(`${path}.css`) + (template.css || '');
     const getHTML = ():string => getFile(`${path}.html`) + (template.html || '');
     const getJAVASCRIPT = ():string => getFile(`${path}.js`) + (template.javascript || '');
-    const existPlugin = (plugin: Plugin): boolean | undefined => template.plugins && template.plugins.includes(plugin.name)
-    const getJSON = ():Object => existsSync(`${path}.json`)? JSON.parse(readFileSync(`${path}.json`, 'utf8')) : {};
+    
     const appendConfigPlugins = (plugins: string[]) => {
             template.plugins = template.plugins ? 
                     template.plugins.concat(plugins) 
                     : template.plugins = plugins;
     };
-    
-    const getPlugins = ():string => 
-            template.plugins? 
-            PluginList
-                .filter( plugin => existPlugin(plugin) )
-                .map( plugin => plugin.tag )
-                .join('\n')
-            : '';
 
-    return new Promise<Template>( (resolve, reject) => {
+    return new Promise<ITemplate>( (resolve, reject) => {
         if(existsSync(`templates/${template.name}`)) {
             let mainTemplate: string = getFile(template.customMainTemplate || `templates/mainTemplate.html`);
-            let config: any = getJSON(); 
+            let config: any = getJSON( join('templates',template.name,template.name) + '.json'); 
 
             if(config.plugins) appendConfigPlugins(config.plugins);
-            mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, getPlugins());
+            mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, pluginsUtilities.getTags(template.plugins || []));
             mainTemplate = mainTemplate.replace(`/*STYLES*/`, getCSS());
             mainTemplate = mainTemplate.replace(`<!--HTML-->`, getHTML());
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
@@ -63,7 +51,7 @@ export const writeTemplate = (template: Template, customDir?: string): Promise<T
 
             const fileName = template.customName || `temp${fileNumber}.html`;
             const path = template.customPath || 'recorder';
-            template.outputUrl = `${path}/${fileName}`;
+            template.outputUrl = join(path, fileName);
             writeFileSync(template.outputUrl, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
@@ -73,7 +61,7 @@ export const writeTemplate = (template: Template, customDir?: string): Promise<T
     })
 }
 
-export const recordTemplate = async (config: RecordConfig, log?: boolean): Promise<any> => {
+export const recordTemplate = async (config: IRecordConfig, log?: boolean): Promise<any> => {
     spinnerText("Recording");
     if(isUndefined(config.transparent)) config.transparent = false;
     const getOutputFile = () => config.outNameFile + (config.transparent? '.avi': '.mp4');
@@ -107,21 +95,22 @@ export const recordTemplate = async (config: RecordConfig, log?: boolean): Promi
     });
 };
 
-export const processElement = (_element: VideoElement, config?: ElementConfig): Promise<VideoElement> => {
-    spinner.start(); prefixText = `${cyan(_element.templateConfig.name)}`;
+export const processElement = (_element: IVideoElement, config?: IElementConfig): Promise<IVideoElement> => {
+    spinner.start(); prefixText = `${Color.cyan(_element.templateConfig.name)}`;
     return new Promise ( async (resolve, reject ) => {
-        let element: VideoElement = _element;
+        let element: IVideoElement = _element;
 
         if(isUndefined(_element)) reject("Element its undefined: "+ JSON.stringify(_element));
-        let dir = 'recorder';
+        let dir = 'videoElements';
         if(config && config.customDir) {
             dir = join(config.customDir,dir);
             element.templateConfig.customPath = dir;
         }
 
-        if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
+        //if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
+        await getOrCreateDir(dir)
 
-        let htmlFile: Template = await writeTemplate(element.templateConfig);
+        let htmlFile: ITemplate = await writeTemplate(element.templateConfig);
         let filename = basename(htmlFile.fileName || '', '.html');
 
         element.recordConfig = {
@@ -138,7 +127,7 @@ export const processElement = (_element: VideoElement, config?: ElementConfig): 
         if(config && config.preserveProccess) element.recordConfig.keepFrames = config.preserveProccess
         element.videoOutput = await recordTemplate(element.recordConfig, log);
         spinnerText('Done'); 
-        spinner.succeed(`Template proccessed: ${green(element.templateConfig.name)}`)
+        spinner.succeed(`Template proccessed: ${Color.green(element.templateConfig.name)}`)
         resolve(element);
     })
 }

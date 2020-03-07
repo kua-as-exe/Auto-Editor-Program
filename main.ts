@@ -1,8 +1,6 @@
-import { processElement } from "./src/VideoElement";
-import { exec } from 'child_process';
-import { VideoElement } from "./src/Interfaces";
-
 import { ElementProcessor } from './src/ElementProcessor';
+import { IVideoElement } from "./src/Interfaces";
+import { exec } from 'child_process';
 
 const main = async () => {
     const ep = new ElementProcessor(0);
@@ -11,10 +9,10 @@ const main = async () => {
         templateConfig: {
             name: 'simpleText', 
             params: {
-                'title': 'Chocolate',
-                'subtitle': 'Malteada',
-                'duration': 1,
-                'fps': 15,
+                'title': 'Dont Worry, It Works!',
+                'subtitle': 'Hey bro, nice program',
+                'duration': 8,
+                'fps': 25,
                 'startTime': 2,
                 'timeOffset': 1,
                 'videoPosition':{
@@ -30,61 +28,28 @@ const main = async () => {
             params: {
                 'text': 'A & S',
                 'subtext': 'Fine guitars',
-                'duration': 1,
-                'startTime': 2,
+                'duration': 6,
+                'fps': 25,
+                'startTime': 5,
+                'videoPosition':{
+                    'x': 30,
+                    'y': 30
+                },
             }
+            
         }
     })
 
     const res = await ep.processElements();
     console.log(res);
-}
 
-main();
-/*
-const main = async () => {
-
-    let relativePath = '../s';
-    let log = false;
-
-    let res1:VideoElement = await processElement({
-        templateConfig: {
-            name: 'simpleText', 
-            params: {
-                'title': 'Chocolate',
-                'subtitle': 'Malteada',
-                'duration': 3,
-                'fps': 15,
-                'startTime': 2,
-                'timeOffset': 1,
-                'videoPosition':{
-                    'x': 0,
-                    'y': 0
-                },
-            }
-        }
-    }, { log: log, relativePath: relativePath})
-    let res2:VideoElement = await processElement({
-        templateConfig: {
-            name: 'anotation1', 
-            params: {
-                'text': 'A & S',
-                'subtext': 'Fine guitars',
-                'duration': 3,
-                'startTime': 2,
-            }
-        }
-    }, { log: log, relativePath: relativePath})
-    //console.log(res2);
-    //console.log(res1);
-    
-    const mainVideoDir = 'recorder/mainVideo.mp4';
-    const outVideoDir = 'finalVideo.mp4';
+    const mainVideoDir = 'processors/processor_0/ToVPS.mov';
+    const outVideoDir = 'processors/processor_0/videoOutput.mp4';
     const videoElements: string[] = []
     const filters: string[] = [];
     const duration = 15;
 
-    const addVideoElement = (element: VideoElement, _inputChannel1?: string, _inputChannel2?: string, _outputChannel?: string)  => {
+    const addVideoElement = (element: IVideoElement, _inputChannel1?: string, _inputChannel2?: string, _outputChannel?: string)  => {
         //console.log("videoElement", videoElements, "\n channel: ", _outputChannel, "\n")
         if(element && element.videoOutput.output) {
             let startTime = element.templateConfig.params.startTime || 0;
@@ -105,7 +70,7 @@ const main = async () => {
         }
     }    
 
-    const addVideoElements = (elements: VideoElement[]) => {
+    const addVideoElements = (elements: IVideoElement[]) => {
         let lastOutput: string
         elements.forEach( (element, i, array) => {
             let inChannel1 = lastOutput || '0';
@@ -116,7 +81,7 @@ const main = async () => {
         })
     }
 
-    addVideoElements([res1,res2])
+    addVideoElements(res);
 
     let videoParams = [
         ['ffmpeg'],
@@ -130,11 +95,12 @@ const main = async () => {
 
     let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
     
-    //console.log(ffmpegCommand);
+    console.log(ffmpegCommand);
 
     exec(ffmpegCommand, (err, stdout) => {
         if(err) console.error(err);
         console.log(stdout);
     })
-    
-}*/
+}
+
+main();

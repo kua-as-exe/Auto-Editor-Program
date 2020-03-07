@@ -12,11 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Utilities_1 = require("./Utilities");
 const fs_1 = require("fs");
-const Declarations_1 = require("./Declarations");
 const path_1 = require("path");
 const util_1 = require("util");
-const chalk_1 = require("chalk");
 const timecut = require('timecut');
 const mergeJSON = require('merge-json').merge;
 const ora_1 = __importDefault(require("ora"));
@@ -25,35 +24,26 @@ const spinner = ora_1.default();
 let prefixText = '';
 const spinnerText = (text) => {
     spinner.prefixText =
-        `${prefixText} ${chalk_1.cyan('[')} ${chalk_1.yellow(text)} ${chalk_1.cyan(']')}`;
+        `${prefixText} ${Utilities_1.Color.cyan('[')} ${Utilities_1.Color.yellow(text)} ${Utilities_1.Color.cyan(']')}`;
 };
 exports.writeTemplate = (template, customDir) => {
     spinnerText("Writing HTML");
     const path = path_1.join('templates', template.name, template.name);
-    const getFile = (path) => fs_1.existsSync(path) ? fs_1.readFileSync(path, 'utf8') : '';
-    const getCSS = () => getFile(`${path}.css`) + (template.css || '');
-    const getHTML = () => getFile(`${path}.html`) + (template.html || '');
-    const getJAVASCRIPT = () => getFile(`${path}.js`) + (template.javascript || '');
-    const existPlugin = (plugin) => template.plugins && template.plugins.includes(plugin.name);
-    const getJSON = () => fs_1.existsSync(`${path}.json`) ? JSON.parse(fs_1.readFileSync(`${path}.json`, 'utf8')) : {};
+    const getCSS = () => Utilities_1.getFile(`${path}.css`) + (template.css || '');
+    const getHTML = () => Utilities_1.getFile(`${path}.html`) + (template.html || '');
+    const getJAVASCRIPT = () => Utilities_1.getFile(`${path}.js`) + (template.javascript || '');
     const appendConfigPlugins = (plugins) => {
         template.plugins = template.plugins ?
             template.plugins.concat(plugins)
             : template.plugins = plugins;
     };
-    const getPlugins = () => template.plugins ?
-        Declarations_1.PluginList
-            .filter(plugin => existPlugin(plugin))
-            .map(plugin => plugin.tag)
-            .join('\n')
-        : '';
     return new Promise((resolve, reject) => {
         if (fs_1.existsSync(`templates/${template.name}`)) {
-            let mainTemplate = getFile(template.customMainTemplate || `templates/mainTemplate.html`);
-            let config = getJSON();
+            let mainTemplate = Utilities_1.getFile(template.customMainTemplate || `templates/mainTemplate.html`);
+            let config = Utilities_1.getJSON(path_1.join('templates', template.name, template.name) + '.json');
             if (config.plugins)
                 appendConfigPlugins(config.plugins);
-            mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, getPlugins());
+            mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, Utilities_1.pluginsUtilities.getTags(template.plugins || []));
             mainTemplate = mainTemplate.replace(`/*STYLES*/`, getCSS());
             mainTemplate = mainTemplate.replace(`<!--HTML-->`, getHTML());
             mainTemplate = mainTemplate.replace(`/*SCRIPTS*/`, getJAVASCRIPT());
@@ -65,7 +55,7 @@ exports.writeTemplate = (template, customDir) => {
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
             const fileName = template.customName || `temp${fileNumber}.html`;
             const path = template.customPath || 'recorder';
-            template.outputUrl = `${path}/${fileName}`;
+            template.outputUrl = path_1.join(path, fileName);
             fs_1.writeFileSync(template.outputUrl, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
@@ -111,18 +101,18 @@ exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, func
 });
 exports.processElement = (_element, config) => {
     spinner.start();
-    prefixText = `${chalk_1.cyan(_element.templateConfig.name)}`;
+    prefixText = `${Utilities_1.Color.cyan(_element.templateConfig.name)}`;
     return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
         let element = _element;
         if (util_1.isUndefined(_element))
             reject("Element its undefined: " + JSON.stringify(_element));
-        let dir = 'recorder';
+        let dir = 'videoElements';
         if (config && config.customDir) {
             dir = path_1.join(config.customDir, dir);
             element.templateConfig.customPath = dir;
         }
-        if (dir && !fs_1.existsSync(dir))
-            fs_1.mkdirSync(dir, { recursive: true }); // create path if dont exists
+        //if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
+        yield Utilities_1.getOrCreateDir(dir);
         let htmlFile = yield exports.writeTemplate(element.templateConfig);
         let filename = path_1.basename(htmlFile.fileName || '', '.html');
         element.recordConfig = {
@@ -139,7 +129,7 @@ exports.processElement = (_element, config) => {
             element.recordConfig.keepFrames = config.preserveProccess;
         element.videoOutput = yield exports.recordTemplate(element.recordConfig, log);
         spinnerText('Done');
-        spinner.succeed(`Template proccessed: ${chalk_1.green(element.templateConfig.name)}`);
+        spinner.succeed(`Template proccessed: ${Utilities_1.Color.green(element.templateConfig.name)}`);
         resolve(element);
     }));
 };

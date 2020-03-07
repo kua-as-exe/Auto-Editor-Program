@@ -1,18 +1,18 @@
-export interface VideoElement {
-    templateConfig: Template,
-    recordConfig?: RecordConfig,
+export interface IVideoElement {
+    templateConfig: ITemplate,
+    recordConfig?: IRecordConfig,
     videoOutput?: Object | any,
     id?:number
 }
 
-export interface ElementConfig {
+export interface IElementConfig {
     customDir?: string,
     relativePath?: string,
     log?: boolean,
     preserveProccess?: boolean
 }
 
-export interface Template {
+export interface ITemplate {
     name: string,
     plugins?: string[],
     html? : string,
@@ -28,13 +28,13 @@ export interface Template {
     videoOutput?: Object
 }
 
-export interface Plugin {
+export interface IPlugin {
     name: string,
     tag: string,
     src?: string
 }
 
-export interface RecordConfig {
+export interface IRecordConfig {
     inputUrl: string,
     outNameFile: string,
     duration: number,
