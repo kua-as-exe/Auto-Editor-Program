@@ -1,0 +1,12 @@
+{
+    "plugins": ["anime.js", "bootstrap"],
+    "defParams":{
+        "width": "200px",
+        "height": "200px",
+        "duration": 5,
+        "elementPosition": {
+            "x": 30,
+            "y": 30
+        }
+    }
+}

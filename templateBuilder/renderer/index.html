@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Main</title>
+
+    <link rel="stylesheet" href="../plugins/bootstrap/bootstrap.min.css">
+<script src="../plugins/anime.js/anime.min.js"></script>
+    <link rel="stylesheet" href="./builderPageTemplate.css">
+    </head><body>
+
+        <style>
+            
+    #back {
+    width: 100%;
+    height: 100%;
+    background-color: #108dbea2;
+    padding: 2%;
+    display: inline-grid;
+}
+
+span{
+    color: whitesmoke;
+}
+
+#subtext {
+    font-size: 5vw;
+    overflow: hidden;
+    width: 0%;
+    text-align: center;
+}
+
+#text {
+    font-size: 8vw;
+    text-align: center;
+    overflow: hidden;
+    font-weight: bold;
+    width: 0%;
+}
+
+
+        </style>
+    <viewer>
+        <visualizer class="">
+            <tools>
+                <div class="scale">
+                    <input id="scale-range" type='range' value='0' min='1' max='50' />
+                </div>
+            </tools>
+            <renderer>
+
+                <screen></screen>
+
+                <container>
+                    <div id="x">
+                        <span>200px</span>
+                        <div class="a"></div>
+                        <div class="b"></div>
+                        <div class="c"></div>
+                    </div>
+                    <div id="y">
+                        <span>200px</span>
+                        <div class="a"></div>
+                        <div class="b"></div>
+                        <div class="c"></div>
+                    </div>
+
+                    <main>
+                <div id="back">
+    <span id="text"></span>
+    <span id="subtext"></span>
+</div>
+                    </main>
+                </container> 
+            </renderer>
+        </visualizer>
+    </viewer>
+
+    <editer>
+
+        <content class="shadow-black">
+
+            <div>
+
+                <p>Plantilla:</p>
+                <h1 id="templateTitle">Hi</h1>
+                <p>s</p>
+                
+            </div>
+
+        </content>
+
+    </editer>
+    
+        <script src="/reload/reload.js"></script>
+        
+        <script>
+            
+            var params = {"templateName":"anotation1","width":"600px","height":"150px","duration":10,"elementPosition":{"x":100,"y":100}};
+            const main = document.getElementsByTagName('main')[0];
+            if(params.width) main.style.width = params.width;
+            if(params.height) main.style.height = params.height;
+
+            document.getElementById('text').innerText = params.text || 'Texto'
+document.getElementById('subtext').innerText = params.subtext || 'Subtexto'
+
+anime.timeline({
+    loop: false, autoplay: true,
+}).add({
+    targets: "#back",
+    height: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1500
+}).add({
+    targets: "#text",
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1500
+}).add({
+    targets: "#subtext",
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1500
+})
+            
+            </script>
+
+        <script src="./builderPageTemplate.js"></script>
+
+    </body></html>

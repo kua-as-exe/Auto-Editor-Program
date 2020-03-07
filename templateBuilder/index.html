@@ -1,39 +1,22 @@
 <!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Main</title>
 
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-<script src="../node_modules/animejs/lib/anime.min.js"></script>
+    <link rel="stylesheet" href="../plugins/bootstrap/bootstrap.min.css">
+<script src="../plugins/anime.js/anime.min.js"></script>
     <link rel="stylesheet" href="./builderPageTemplate.css">
     </head><body>
 
         <style>
             
-    #back {
+    
+#bg {
+    padding: 0px;
+    background-color: #55dfcccc;
     width: 100%;
     height: 100%;
-    background-color: #108dbea2;
-    padding: 2%;
-    display: inline-grid;
-}
-
-span{
-    color: whitesmoke;
-}
-
-#subtext {
-    font-size: 5vw;
     overflow: hidden;
-    width: 0%;
-    text-align: center;
+    display: grid;
+    align-items: center;
 }
-
-#text {
-    font-size: 8vw;
-    text-align: center;
-    overflow: hidden;
-    font-weight: bold;
-    width: 0%;
-}
-
 
         </style>
     <viewer>
@@ -62,9 +45,8 @@ span{
                     </div>
 
                     <main>
-                <div id="back">
-    <span id="text"></span>
-    <span id="subtext"></span>
+                <div id="bg">
+    <img src="{RESOURCE_1}" alt="" width="100%">
 </div>
                     </main>
                 </container> 
@@ -92,34 +74,18 @@ span{
         
         <script>
             
-            var params = {"templateName":"anotation1","width":"600px","height":"150px","duration":10,"elementPosition":{"x":100,"y":100}};
+            var params = {"templateName":"image1","width":"200px","height":"200px","duration":5,"elementPosition":{"x":30,"y":30}};
             const main = document.getElementsByTagName('main')[0];
             if(params.width) main.style.width = params.width;
             if(params.height) main.style.height = params.height;
 
-            document.getElementById('text').innerText = params.text || 'Texto'
-document.getElementById('subtext').innerText = params.subtext || 'Subtexto'
-
+            document.getElementById('title').innerText = params.title || 'Título'
+document.getElementById('subtitle').innerText = params.subtitle || 'Subtítulo'
+anime()
 anime.timeline({
-    loop: false, autoplay: true,
+
 }).add({
-    targets: "#back",
-    height: ['0%', '100%'],
-    opacity: ['0%', '100%'],
-    easing: 'easeInOutQuart',
-    duration: 1500
-}).add({
-    targets: "#text",
-    width: ['0%', '100%'],
-    opacity: ['0%', '100%'],
-    easing: 'easeInOutQuart',
-    duration: 1500
-}).add({
-    targets: "#subtext",
-    width: ['0%', '100%'],
-    opacity: ['0%', '100%'],
-    easing: 'easeInOutQuart',
-    duration: 1500
+   
 })
             
             </script>

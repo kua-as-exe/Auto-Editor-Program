@@ -12,7 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ElementProcessor_1 = require("./src/ElementProcessor");
 const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const ep = new ElementProcessor_1.ElementProcessor(0);
+    const ep = new ElementProcessor_1.ElementProcessor(0, {
+        preserveProccess: true
+    });
     ep.add({
         templateConfig: {
             name: 'simpleText',

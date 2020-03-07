@@ -3,7 +3,9 @@ import { IVideoElement } from "./src/Interfaces";
 import { exec } from 'child_process';
 
 const main = async () => {
-    const ep = new ElementProcessor(0);
+    const ep = new ElementProcessor(0,{
+        preserveProccess: true
+    });
 
     ep.add({
         templateConfig: {

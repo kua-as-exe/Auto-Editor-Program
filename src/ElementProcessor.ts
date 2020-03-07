@@ -30,7 +30,10 @@ export class ElementProcessor {
 
     processElements = () => new Promise<IVideoElement[]>( async (resolve, reject) => {
         let processedElements: IVideoElement[] = [];
+
         await this.setupPlugins();
+        await this.setupAssets();
+        
         await asyncForEach(this.elements, async (videoElement: IVideoElement)=>{
             var e = await processElement(videoElement, {
                 customDir: this.path,
@@ -39,6 +42,7 @@ export class ElementProcessor {
             });
             processedElements.push(e);
         });
+        
         if(!this.preserveProccess) this.removePlugins()
         resolve(processedElements);
     })
@@ -66,5 +70,9 @@ export class ElementProcessor {
     }
 
     private removePlugins = () => removeDir(join( this.path, 'plugins'));
+
+    private setupAssets = () => {
+        const resourcesPath = getOrCreateDir(join( this.path, 'assets'));;
+    }
 
 }

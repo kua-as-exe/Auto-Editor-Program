@@ -25,6 +25,7 @@ class ElementProcessor {
         this.processElements = () => new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let processedElements = [];
             yield this.setupPlugins();
+            yield this.setupAssets();
             yield Utilities_1.asyncForEach(this.elements, (videoElement) => __awaiter(this, void 0, void 0, function* () {
                 var e = yield VideoElement_1.processElement(videoElement, {
                     customDir: this.path,
@@ -58,6 +59,10 @@ class ElementProcessor {
             }));
         });
         this.removePlugins = () => Utilities_1.removeDir(path_1.join(this.path, 'plugins'));
+        this.setupAssets = () => {
+            const resourcesPath = Utilities_1.getOrCreateDir(path_1.join(this.path, 'assets'));
+            ;
+        };
         this.id = id;
         this.customPath = `processor_${id}`;
         if (config) {

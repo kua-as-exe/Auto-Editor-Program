@@ -1,0 +1,10 @@
+
+#bg {
+    padding: 0px;
+    background-color: #55dfcccc;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: grid;
+    align-items: center;
+}
