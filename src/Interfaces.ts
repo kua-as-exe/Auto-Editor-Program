@@ -44,3 +44,10 @@ export interface IRecordConfig {
     keepFrames? : boolean,
     transparent? :boolean,
 }
+
+export interface IElementProcessorState {
+    setup: {
+        plugins: boolean,
+        resources: boolean
+    }
+}

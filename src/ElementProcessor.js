@@ -24,15 +24,16 @@ class ElementProcessor {
         };
         this.processElements = () => new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let processedElements = [];
-            yield this.setupPlugins();
+            if (!this.state.setup.plugins)
+                yield this.setupPlugins();
             yield this.setupAssets();
             yield Utilities_1.asyncForEach(this.elements, (videoElement) => __awaiter(this, void 0, void 0, function* () {
-                var e = yield VideoElement_1.processElement(videoElement, {
+                var elem = yield VideoElement_1.processElement(videoElement, {
                     customDir: this.path,
                     preserveProccess: this.preserveProccess,
                     log: this.log
                 });
-                processedElements.push(e);
+                processedElements.push(elem);
             }));
             if (!this.preserveProccess)
                 this.removePlugins();
@@ -57,8 +58,12 @@ class ElementProcessor {
                 const destination = path_1.join(pluginsPath, plugin);
                 yield Utilities_1.copyFile(origin, destination);
             }));
+            this.state.setup.plugins = true;
         });
-        this.removePlugins = () => Utilities_1.removeDir(path_1.join(this.path, 'plugins'));
+        this.removePlugins = () => {
+            Utilities_1.removeDir(path_1.join(this.path, 'plugins'));
+            this.state.setup.plugins = false;
+        };
         this.setupAssets = () => {
             const resourcesPath = Utilities_1.getOrCreateDir(path_1.join(this.path, 'assets'));
             ;
@@ -71,6 +76,12 @@ class ElementProcessor {
             this.log = config.log || false;
         }
         this.path = path_1.join(this.mainPath, this.customPath);
+        this.state = {
+            setup: {
+                plugins: false,
+                resources: false
+            }
+        };
     }
 }
 exports.ElementProcessor = ElementProcessor;

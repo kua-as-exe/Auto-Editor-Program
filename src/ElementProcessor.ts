@@ -1,5 +1,5 @@
 import { getOrCreateDir, asyncForEach, getJSON, pluginsUtilities, copyFile, removeDir } from "./Utilities";
-import { IVideoElement, IElementConfig, IPlugin } from "./Interfaces";
+import { IVideoElement, IElementConfig, IPlugin, IElementProcessorState } from "./Interfaces";
 import { processElement } from "./VideoElement";
 import { join } from "path";
 
@@ -11,6 +11,7 @@ export class ElementProcessor {
     private elements: IVideoElement[] = [];
     private preserveProccess: boolean = false;
     private log: boolean = false;
+    private state: IElementProcessorState;
 
     constructor(id: number, config?: IElementConfig){
         this.id = id;
@@ -21,6 +22,12 @@ export class ElementProcessor {
             this.log = config.log || false;
         }
         this.path = join(this.mainPath, this.customPath);
+        this.state = {
+            setup: {
+                plugins: false,
+                resources: false
+            }
+        };
     }
 
     add = (videoElement: IVideoElement) => {
@@ -31,23 +38,23 @@ export class ElementProcessor {
     processElements = () => new Promise<IVideoElement[]>( async (resolve, reject) => {
         let processedElements: IVideoElement[] = [];
 
-        await this.setupPlugins();
+        if(!this.state.setup.plugins) await this.setupPlugins();
         await this.setupAssets();
         
         await asyncForEach(this.elements, async (videoElement: IVideoElement)=>{
-            var e = await processElement(videoElement, {
+            var elem = await processElement(videoElement, {
                 customDir: this.path,
                 preserveProccess: this.preserveProccess,
                 log: this.log
             });
-            processedElements.push(e);
+            processedElements.push(elem);
         });
         
         if(!this.preserveProccess) this.removePlugins()
         resolve(processedElements);
     })
 
-    private getPlugins = () =>{
+    private getPlugins = () => {
         let plugins: any[] = [];
         this.elements.forEach(  (elem: IVideoElement) =>
             { 
@@ -59,7 +66,7 @@ export class ElementProcessor {
         return [...  new Set(plugins)]; // removes the same elements
     }
 
-    private setupPlugins = async () => {
+    setupPlugins = async () => {
         const pluginsPath = getOrCreateDir(join( this.path, 'plugins'));;
         let pluginsSrc: string[] = pluginsUtilities.getSrc(this.getPlugins());
         await pluginsSrc.forEach( async plugin => {
@@ -67,9 +74,13 @@ export class ElementProcessor {
             const destination = join(pluginsPath, plugin)
             await copyFile(origin, destination);
         })
+        this.state.setup.plugins = true;
     }
 
-    private removePlugins = () => removeDir(join( this.path, 'plugins'));
+    removePlugins = () => {
+        removeDir(join( this.path, 'plugins'));
+        this.state.setup.plugins = false;
+    };
 
     private setupAssets = () => {
         const resourcesPath = getOrCreateDir(join( this.path, 'assets'));;
