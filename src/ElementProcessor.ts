@@ -1,7 +1,6 @@
-import { getOrCreateDir, asyncForEach, getJSON, pluginsUtilities, copyFile, removeDir } from "./Utilities";
+import { getOrCreateDir, asyncForEach, getJSON, pluginsUtilities, copyFile, removeDir, PathJoin } from "./Utilities";
 import { IVideoElement, IElementConfig, IPlugin, IElementProcessorState } from "./Interfaces";
 import { processElement } from "./VideoElement";
-import { join } from "path";
 
 export class ElementProcessor {
     private id:number;
@@ -21,7 +20,7 @@ export class ElementProcessor {
             this.preserveProccess = config.preserveProccess || false;
             this.log = config.log || false;
         }
-        this.path = join(this.mainPath, this.customPath);
+        this.path = PathJoin(this.mainPath, this.customPath);
         this.state = {
             setup: {
                 plugins: false,
@@ -58,7 +57,7 @@ export class ElementProcessor {
         let plugins: any[] = [];
         this.elements.forEach(  (elem: IVideoElement) =>
             { 
-                const config: any = getJSON( join('templates',elem.templateConfig.name,elem.templateConfig.name) + '.json'); 
+                const config: any = getJSON( PathJoin('templates',elem.templateConfig.name,elem.templateConfig.name) + '.json'); 
                 const elemPlugin: Plugin[] = config.plugins || [];
                 if(elemPlugin) elemPlugin.forEach( plugin => plugins.push(plugin));
             }
@@ -67,23 +66,23 @@ export class ElementProcessor {
     }
 
     setupPlugins = async () => {
-        const pluginsPath = getOrCreateDir(join( this.path, 'plugins'));;
+        const pluginsPath = getOrCreateDir(PathJoin( this.path, 'plugins'));;
         let pluginsSrc: string[] = pluginsUtilities.getSrc(this.getPlugins());
         await pluginsSrc.forEach( async plugin => {
-            const origin = join('src','plugins', plugin);
-            const destination = join(pluginsPath, plugin)
+            const origin = PathJoin('src','plugins', plugin);
+            const destination = PathJoin(pluginsPath, plugin)
             await copyFile(origin, destination);
         })
         this.state.setup.plugins = true;
     }
 
     removePlugins = () => {
-        removeDir(join( this.path, 'plugins'));
+        removeDir(PathJoin( this.path, 'plugins'));
         this.state.setup.plugins = false;
     };
 
     private setupAssets = () => {
-        const resourcesPath = getOrCreateDir(join( this.path, 'assets'));;
+        const resourcesPath = getOrCreateDir(PathJoin( this.path, 'assets'));;
     }
 
 }

@@ -1,6 +1,7 @@
 import { copy, mkdirSync, existsSync, readFileSync, remove } from "fs-extra";
 import { PluginList } from "./Declarations";
 import { IPlugin } from "./Interfaces";
+import { join, resolve, parse } from 'path';
 
 import { red, cyan, green, yellow} from 'chalk';
 export const Color = {
@@ -12,6 +13,11 @@ export const Color = {
 
 export const copyFile = copy;
 export const removeDir = remove;
+
+const removeBackslash = (arg: string) => arg.replace(/\\/g, "/");
+export const PathJoin = (...paths: string[]) => removeBackslash(join.apply(null, paths));
+export const PathResolve = (...paths: string[]) => removeBackslash(resolve.apply(null, paths));
+export const PathParse = (path: string) => parse(path);
 
 export const getOrCreateDir = ( dir: string) => {
     if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true });

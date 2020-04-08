@@ -10,17 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ElementProcessor_1 = require("./src/ElementProcessor");
-const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const ep = new ElementProcessor_1.ElementProcessor(0, {
-        preserveProccess: true
+        preserveProccess: true,
+        log: true
     });
     ep.add({
         templateConfig: {
             name: 'simpleText',
             params: {
-                'title': 'Dont Worry, It Works!',
-                'subtitle': 'Hey bro, nice program',
+                'title': 'This is working as fuck',
+                'subtitle': 'FUCKING MINT',
                 'duration': 8,
                 'fps': 25,
                 'startTime': 2,
@@ -37,7 +37,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             name: 'anotation1',
             params: {
                 'text': 'A & S',
-                'subtext': 'Fine guitars',
+                'subtext': 'Fine guitars, drake',
                 'duration': 6,
                 'fps': 25,
                 'startTime': 5,
@@ -71,7 +71,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             let inputChannel2 = _inputChannel2 || 1;
             let outputChannel = _outputChannel ? `[${_outputChannel}]` : '';
             videoElements.push(`-itsoffset ${startTime} -i ${element.videoOutput.output}`);
-            filters.push(`[${inputChannel1}][${inputChannel2}]overlay=${xPosition}:${yPosition}${outputChannel}`);
+            filters.push(`[${inputChannel1}][${inputChannel2}] overlay=${xPosition}:${yPosition}${outputChannel}`);
         }
     };
     const addVideoElements = (elements) => {
@@ -86,7 +86,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     };
     addVideoElements(res);
     let videoParams = [
-        ['ffmpeg'],
+        ['./src/ffmpeg.exe'],
         ['-t', duration],
         ['-i', mainVideoDir],
         videoElements,
@@ -96,10 +96,15 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     ];
     let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
     console.log(ffmpegCommand);
-    child_process_1.exec(ffmpegCommand, (err, stdout) => {
-        if (err)
-            console.error(err);
+    /*
+    exec(ffmpegCommand, (err: any, stdout:any) => {
+        if(err) console.error(err);
         console.log(stdout);
-    });
+    })
+    */
+    /*var t = spawnSync("powershell.exe", [ffmpegCommand]);
+     console.log(t.stdout.toString())
+     console.log(t.stderr.toString())
+     */
 });
 main();

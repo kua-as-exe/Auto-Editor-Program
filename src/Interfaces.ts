@@ -51,3 +51,18 @@ export interface IElementProcessorState {
         resources: boolean
     }
 }
+
+export interface IRecordHTMLFileConfig {
+    roundToEvenWidth: boolean,
+    roundToEvenHeight: boolean,
+    url: string,
+    viewport: { 
+        width: number, 
+        height: number
+    },
+    fps: number,
+    duration: number,
+    keepFrames: boolean,
+    output: string,
+    quiet: boolean,
+}

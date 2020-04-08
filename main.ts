@@ -1,18 +1,19 @@
 import { ElementProcessor } from './src/ElementProcessor';
 import { IVideoElement } from "./src/Interfaces";
-import { exec } from 'child_process';
+import { exec, spawnSync } from 'child_process';
 
 const main = async () => {
     const ep = new ElementProcessor(0,{
-        preserveProccess: true
+        preserveProccess: true,
+        log: true
     });
 
     ep.add({
         templateConfig: {
             name: 'simpleText', 
             params: {
-                'title': 'Dont Worry, It Works!',
-                'subtitle': 'Hey bro, nice program',
+                'title': 'This is working as fuck',
+                'subtitle': 'FUCKING MINT',
                 'duration': 8,
                 'fps': 25,
                 'startTime': 2,
@@ -29,7 +30,7 @@ const main = async () => {
             name: 'anotation1', 
             params: {
                 'text': 'A & S',
-                'subtext': 'Fine guitars',
+                'subtext': 'Fine guitars, drake',
                 'duration': 6,
                 'fps': 25,
                 'startTime': 5,
@@ -68,7 +69,7 @@ const main = async () => {
             let inputChannel2 = _inputChannel2 || 1;
             let outputChannel = _outputChannel? `[${_outputChannel}]`: '';
             videoElements.push(`-itsoffset ${startTime} -i ${element.videoOutput.output}`);
-            filters.push(`[${inputChannel1}][${inputChannel2}]overlay=${xPosition}:${yPosition}${outputChannel}`);
+            filters.push(`[${inputChannel1}][${inputChannel2}] overlay=${xPosition}:${yPosition}${outputChannel}`);
         }
     }    
 
@@ -86,7 +87,7 @@ const main = async () => {
     addVideoElements(res);
 
     let videoParams = [
-        ['ffmpeg'],
+        ['./src/ffmpeg.exe'],
         ['-t', duration],
         ['-i', mainVideoDir],
         videoElements,
@@ -99,10 +100,16 @@ const main = async () => {
     
     console.log(ffmpegCommand);
 
-    exec(ffmpegCommand, (err, stdout) => {
+    /*    
+    exec(ffmpegCommand, (err: any, stdout:any) => {
         if(err) console.error(err);
         console.log(stdout);
     })
+    */
+   /*var t = spawnSync("powershell.exe", [ffmpegCommand]);
+    console.log(t.stdout.toString())
+    console.log(t.stderr.toString())
+    */
 }
 
 main();

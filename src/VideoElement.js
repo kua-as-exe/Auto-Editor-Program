@@ -13,12 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Utilities_1 = require("./Utilities");
+const Recorder_1 = require("./Recorder");
 const fs_1 = require("fs");
 const path_1 = require("path");
 const util_1 = require("util");
-const timecut = require('timecut');
+//const timecut = require('timecut');
 const mergeJSON = require('merge-json').merge;
 const ora_1 = __importDefault(require("ora"));
+const chalk_1 = __importDefault(require("chalk"));
 let fileNumber = 0;
 const spinner = ora_1.default();
 let prefixText = '';
@@ -28,7 +30,7 @@ const spinnerText = (text) => {
 };
 exports.writeTemplate = (template, customDir) => {
     spinnerText("Writing HTML");
-    const path = path_1.join('templates', template.name, template.name);
+    const path = Utilities_1.PathJoin('templates', template.name, template.name);
     const getCSS = () => Utilities_1.getFile(`${path}.css`) + (template.css || '');
     const getHTML = () => Utilities_1.getFile(`${path}.html`) + (template.html || '');
     const getJAVASCRIPT = () => Utilities_1.getFile(`${path}.js`) + (template.javascript || '');
@@ -40,7 +42,7 @@ exports.writeTemplate = (template, customDir) => {
     return new Promise((resolve, reject) => {
         if (fs_1.existsSync(`templates/${template.name}`)) {
             let mainTemplate = Utilities_1.getFile(template.customMainTemplate || `templates/mainTemplate.html`);
-            let config = Utilities_1.getJSON(path_1.join('templates', template.name, template.name) + '.json');
+            let config = Utilities_1.getJSON(Utilities_1.PathJoin('templates', template.name, template.name) + '.json');
             if (config.plugins)
                 appendConfigPlugins(config.plugins);
             mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, Utilities_1.pluginsUtilities.getTags(template.plugins || []));
@@ -55,7 +57,7 @@ exports.writeTemplate = (template, customDir) => {
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
             const fileName = template.customName || `temp${fileNumber}.html`;
             const path = template.customPath || 'recorder';
-            template.outputUrl = path_1.join(path, fileName);
+            template.outputUrl = Utilities_1.PathJoin(path, fileName);
             fs_1.writeFileSync(template.outputUrl, mainTemplate);
             template.processed = true;
             template.fileName = fileName;
@@ -84,19 +86,24 @@ exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, func
         output: getOutputFile(),
         quiet: !log || false
     };
+    console.log(options);
     if (config.transparent) {
         options.outputOptions = ['-vcodec', 'ffvhuff'];
         options.transparentBackground = true;
         options.pixFmt = '';
     }
     return new Promise((resolve, reject) => {
-        timecut(options)
+        console.log(chalk_1.default.green("Timecut:"), options);
+        Recorder_1.RecordHTMLFile(options)
             .then(() => {
             if (config && !config.keepFrames)
                 fs_1.unlinkSync(config.inputUrl);
             resolve(options);
         })
-            .catch((err) => reject(err));
+            .catch((err) => {
+            console.error(chalk_1.default.red(err));
+            reject(err);
+        });
     });
 });
 exports.processElement = (_element, config) => {
@@ -108,7 +115,7 @@ exports.processElement = (_element, config) => {
             reject("Element its undefined: " + JSON.stringify(_element));
         let dir = 'videoElements';
         if (config && config.customDir) {
-            dir = path_1.join(config.customDir, dir);
+            dir = Utilities_1.PathJoin(config.customDir, dir);
             element.templateConfig.customPath = dir;
         }
         //if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
@@ -117,7 +124,7 @@ exports.processElement = (_element, config) => {
         let filename = path_1.basename(htmlFile.fileName || '', '.html');
         element.recordConfig = {
             inputUrl: htmlFile.outputUrl || "",
-            outNameFile: path_1.join(dir, filename),
+            outNameFile: Utilities_1.PathJoin(dir, filename),
             duration: htmlFile.params.duration || 3,
             fps: htmlFile.params.fps || 25,
             width: htmlFile.params.width,
