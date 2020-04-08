@@ -95,6 +95,7 @@ export const recordTemplate = async (config: IRecordConfig, log?: boolean): Prom
         console.log(chalk.green("Timecut:"), options);
         RecordHTMLFile(options)
         .then( () => {
+            console.log(chalk.red('\nAquí llegamos compas\n'))
             if(config && !config.keepFrames) unlinkSync(config.inputUrl);
             resolve(options)
         })

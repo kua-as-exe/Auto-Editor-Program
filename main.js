@@ -10,16 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const ElementProcessor_1 = require("./src/ElementProcessor");
+const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const ep = new ElementProcessor_1.ElementProcessor(0, {
-        preserveProccess: true,
-        log: true
+        preserveProccess: false,
+        log: false
     });
     ep.add({
         templateConfig: {
             name: 'simpleText',
             params: {
-                'title': 'This is working as fuck',
+                'title': 'Fucking Mint',
                 'subtitle': 'FUCKING MINT',
                 'duration': 8,
                 'fps': 25,
@@ -37,7 +38,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             name: 'anotation1',
             params: {
                 'text': 'A & S',
-                'subtext': 'Fine guitars, drake',
+                'subtext': 'Fine guitars, bro',
                 'duration': 6,
                 'fps': 25,
                 'startTime': 5,
@@ -49,7 +50,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         }
     });
     const res = yield ep.processElements();
-    console.log(res);
+    //console.log(res);
     const mainVideoDir = 'processors/processor_0/ToVPS.mov';
     const outVideoDir = 'processors/processor_0/videoOutput.mp4';
     const videoElements = [];
@@ -102,9 +103,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         console.log(stdout);
     })
     */
-    /*var t = spawnSync("powershell.exe", [ffmpegCommand]);
-     console.log(t.stdout.toString())
-     console.log(t.stderr.toString())
-     */
+    var t = child_process_1.spawnSync("powershell.exe", [ffmpegCommand]);
+    console.log(t.stdout.toString());
+    console.log(t.stderr.toString());
 });
 main();

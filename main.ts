@@ -4,15 +4,15 @@ import { exec, spawnSync } from 'child_process';
 
 const main = async () => {
     const ep = new ElementProcessor(0,{
-        preserveProccess: true,
-        log: true
+        preserveProccess: false,
+        log: false
     });
 
     ep.add({
         templateConfig: {
             name: 'simpleText', 
             params: {
-                'title': 'This is working as fuck',
+                'title': 'Fucking Mint',
                 'subtitle': 'FUCKING MINT',
                 'duration': 8,
                 'fps': 25,
@@ -30,7 +30,7 @@ const main = async () => {
             name: 'anotation1', 
             params: {
                 'text': 'A & S',
-                'subtext': 'Fine guitars, drake',
+                'subtext': 'Fine guitars, bro',
                 'duration': 6,
                 'fps': 25,
                 'startTime': 5,
@@ -44,7 +44,7 @@ const main = async () => {
     })
 
     const res = await ep.processElements();
-    console.log(res);
+    //console.log(res);
 
     const mainVideoDir = 'processors/processor_0/ToVPS.mov';
     const outVideoDir = 'processors/processor_0/videoOutput.mp4';
@@ -106,10 +106,10 @@ const main = async () => {
         console.log(stdout);
     })
     */
-   /*var t = spawnSync("powershell.exe", [ffmpegCommand]);
+   var t = spawnSync("powershell.exe", [ffmpegCommand]);
     console.log(t.stdout.toString())
     console.log(t.stderr.toString())
-    */
+    
 }
 
 main();

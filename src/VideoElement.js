@@ -96,6 +96,7 @@ exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, func
         console.log(chalk_1.default.green("Timecut:"), options);
         Recorder_1.RecordHTMLFile(options)
             .then(() => {
+            console.log(chalk_1.default.red('\nAquí llegamos compas\n'));
             if (config && !config.keepFrames)
                 fs_1.unlinkSync(config.inputUrl);
             resolve(options);

@@ -64,5 +64,5 @@ export interface IRecordHTMLFileConfig {
     duration: number,
     keepFrames: boolean,
     output: string,
-    quiet: boolean,
+    quiet: boolean
 }

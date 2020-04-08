@@ -1,23 +1,22 @@
-import { PathResolve, PathParse, getOrCreateDir, removeDir } from './Utilities';
+import { PathResolve, PathParse, getOrCreateDir, removeDir, PathJoin } from './Utilities';
 import { spawn, ChildProcessWithoutNullStreams } from 'child_process';
 import { IRecordHTMLFileConfig } from './interfaces';
+import chalk from 'chalk';
 //import * as timesnap from 'timesnap';
 const timesnap = require('timesnap');
 
-export const RecordHTMLFile = (options: any): Promise<any> => {
-    return new Promise( (resolve, reject) => {
-        console.log(options);
-    })
+export const RecordHTMLFile = (options: IRecordHTMLFileConfig): Promise<any> => {
+    return record(options);
 }
 
 
-export function record(config: IRecordHTMLFileConfig){
+export function record(config: IRecordHTMLFileConfig): Promise<any>{
     config = Object.assign({
         roundToEvenWidth: true,
         roundToEvenHeight: true,
       }, config || {});
-      console.log(config)
       var output = PathResolve(process.cwd(), config.output || 'video.mp4');
+      //var output = config.output
     
       var frameDirectory: string;
       var outputPattern: string;
@@ -25,8 +24,8 @@ export function record(config: IRecordHTMLFileConfig){
     
       frameDirectory = 'timecut-' + (config.keepFrames ? 'frames-' : 'temp-') + (new Date()).getTime();
       
-      frameDirectory = PathResolve(PathParse(output).dir);
-      outputPattern = PathResolve(frameDirectory, 'image-%09d.png');
+      frameDirectory = PathJoin(PathParse(output).dir, frameDirectory);
+      outputPattern = PathJoin(frameDirectory, 'image-%09d.png');
     
       var timesnapConfig = Object.assign({}, config, {
         output: '',
@@ -37,21 +36,23 @@ export function record(config: IRecordHTMLFileConfig){
         if(!config.quiet) console.log.apply(null, [args])
       }   
     
+
+      
       var makeProcessPromise = function () {
-        //makeFileDirectoryIfNeeded(output);
-        getOrCreateDir(output);
         var input = outputPattern;
     
         let ffmpegArguments = [
           '-framerate', String(config.fps),
-          '-i', input.replace(/\\/g, "/"),
+          '-i', input,
           '-vcodec', 'ffvhuff',
-          '-y', output.replace(/\\/g, "/")
+          '-y', output
         ]
         
-        convertProcess = spawn('ffmpeg.exe', ffmpegArguments);
+        convertProcess = spawn('./src/ffmpeg.exe', ffmpegArguments);
         convertProcess.stderr.setEncoding('utf8');
-        convertProcess.stderr.on('data', (data) => log(data) );
+        convertProcess.stderr.on('data', log );
+        convertProcess.stderr.on('error', (err) => log(chalk.red(err)) );
+        convertProcess.on('error', (err) => log(chalk.red(err)) );
         return new Promise(function (resolve, reject) {
           convertProcess.on('close', () => resolve() );
     
@@ -61,11 +62,17 @@ export function record(config: IRecordHTMLFileConfig){
         })
       };
     
-      return timesnap(timesnapConfig)
-        .then(() => { if (convertProcess) convertProcess.stdin.end() })
-            .then( makeProcessPromise())
-                .catch((err: any) => log(err))
-                .then(() => { 
-                    if (!config.keepFrames) removeDir(frameDirectory) 
-                });
+      
+    return new Promise( (resolve, reject) => {
+        const res = timesnap(timesnapConfig)
+        .then(() => { 
+            makeProcessPromise()
+            .then(() => { 
+                if (!config.keepFrames) removeDir(frameDirectory) 
+                convertProcess.stdin.end()
+                resolve("True")
+            })
+            .catch((err: any) => log(err))
+        })
+    });
 }
