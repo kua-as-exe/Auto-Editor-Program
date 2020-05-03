@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_extra_1 = require("fs-extra");
 const Declarations_1 = require("./Declarations");
+const fs_extra_1 = require("fs-extra");
 const path_1 = require("path");
 const chalk_1 = require("chalk");
 exports.Color = {
@@ -21,10 +21,14 @@ exports.Color = {
 };
 exports.copyFile = fs_extra_1.copy;
 exports.removeDir = fs_extra_1.remove;
+exports.exists = fs_extra_1.existsSync;
+exports.writeFile = fs_extra_1.writeFileSync;
 const removeBackslash = (arg) => arg.replace(/\\/g, "/");
 exports.PathJoin = (...paths) => removeBackslash(path_1.join.apply(null, paths));
 exports.PathResolve = (...paths) => removeBackslash(path_1.resolve.apply(null, paths));
 exports.PathParse = (path) => path_1.parse(path);
+exports.mergeJSON = (...jsons) => Object.assign(jsons);
+exports.isUndefined = (value) => value === undefined;
 exports.getOrCreateDir = (dir) => {
     if (dir && !fs_extra_1.existsSync(dir))
         fs_extra_1.mkdirSync(dir, { recursive: true });

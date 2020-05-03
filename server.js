@@ -13,6 +13,7 @@ const VideoElement_1 = require("./src/VideoElement");
 const Declarations_1 = require("./src/Declarations");
 const fs_extra_1 = require("fs-extra");
 const path_1 = require("path");
+const Utilities_1 = require("./src/Utilities");
 var express = require('express');
 var http = require('http');
 var reload = require('reload');
@@ -33,8 +34,20 @@ const loadPlugin = (plugin) => {
     let src = plugin.src || "default";
     fs_extra_1.copySync(path_1.join('src', 'plugins', src), path_1.join(templateBuilderPath, 'plugins', src));
 };
+const loadAsset = (asset, template) => {
+    var name = asset.name || "";
+    var src = asset.src || "./";
+    var type = asset.type || "file";
+    var def = asset.default || src;
+    var fullSrc = (type == "file") ? Utilities_1.PathJoin('./', template.name, src) : src; // aquí puede haber un error en caso de haber varios elementos de la misma plantilla
+    Utilities_1.getOrCreateDir(Utilities_1.PathJoin(templateBuilderPath, 'assets', template.name));
+    console.log(src);
+    if (name && src)
+        fs_extra_1.copySync(path_1.join('templates', template.name, 'assets', def), path_1.join(templateBuilderPath, 'assets', fullSrc));
+};
 const refreshFile = () => {
     return VideoElement_1.writeTemplate({
+        //debería añadir un "id" por aquí
         name: currentTemplate,
         customPath: templateBuilderPath,
         customName: 'index.html',
@@ -46,11 +59,17 @@ const refreshFile = () => {
             if (!fs_extra_1.existsSync(path_1.join(templateBuilderPath, plugin.src || "")))
                 loadPlugin(plugin);
         });
+        let template_assets = temp.assets;
+        if (template_assets) {
+            Utilities_1.getOrCreateDir(Utilities_1.PathJoin(templateBuilderPath, "assets"));
+            template_assets.forEach(asset => loadAsset(asset, temp));
+        }
     });
 };
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
     const reloadReturned = yield reload(app);
     server.listen(app.get('port'), () => console.log('Web server listening on port ' + app.get('port')));
+    //execSync('start http://localhost:'+app.get('port') )
     watch.watchTree(__dirname + "/templates", () => __awaiter(void 0, void 0, void 0, function* () {
         yield refreshFile();
         reloadReturned.reload();

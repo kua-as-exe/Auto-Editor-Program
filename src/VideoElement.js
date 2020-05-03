@@ -12,15 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Utilities_1 = require("./Utilities");
 const Recorder_1 = require("./Recorder");
-const fs_1 = require("fs");
+const Utilities_1 = require("./Utilities");
 const path_1 = require("path");
-const util_1 = require("util");
-//const timecut = require('timecut');
-const mergeJSON = require('merge-json').merge;
 const ora_1 = __importDefault(require("ora"));
-const chalk_1 = __importDefault(require("chalk"));
+const fs_1 = require("fs");
+const mergeJSON = require('merge-json').merge;
 let fileNumber = 0;
 const spinner = ora_1.default();
 let prefixText = '';
@@ -39,10 +36,16 @@ exports.writeTemplate = (template, customDir) => {
             template.plugins.concat(plugins)
             : template.plugins = plugins;
     };
+    const videoResolution = {
+        width: "1280px",
+        height: "720px"
+    };
     return new Promise((resolve, reject) => {
-        if (fs_1.existsSync(`templates/${template.name}`)) {
+        if (Utilities_1.exists(`templates/${template.name}`)) {
             let mainTemplate = Utilities_1.getFile(template.customMainTemplate || `templates/mainTemplate.html`);
             let config = Utilities_1.getJSON(Utilities_1.PathJoin('templates', template.name, template.name) + '.json');
+            if (config.assets)
+                template.assets = config.assets;
             if (config.plugins)
                 appendConfigPlugins(config.plugins);
             mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, Utilities_1.pluginsUtilities.getTags(template.plugins || []));
@@ -53,8 +56,28 @@ exports.writeTemplate = (template, customDir) => {
                 template.params = {};
             template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
             template.params = mergeJSON({ 'templateName': template.name }, template.params); //añade el nombre de la plantilla como parámetro
+            if (template.params) {
+                if (template.params.width == "full")
+                    template.params.width = videoResolution.width;
+                if (template.params.height == "full")
+                    template.params.height = videoResolution.height;
+            }
             if (template.params)
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
+            if (template.assets) {
+                let template_assets = template.assets;
+                template_assets.forEach(asset => {
+                    var name = asset.name || "";
+                    var src = asset.src || "./";
+                    var type = asset.type || "file";
+                    if (type == "file")
+                        src = Utilities_1.PathJoin('./', 'assets', template.name, src); // aquí puede haber un error en caso de haber varios elementos de la misma plantilla
+                    //var Normalizedsrc = PathResolve(src);
+                    //console.log(Normalizedsrc);
+                    if (name && src)
+                        mainTemplate = mainTemplate.replace(`{${name}}`, src);
+                });
+            }
             const fileName = template.customName || `temp${fileNumber}.html`;
             const path = template.customPath || 'recorder';
             template.outputUrl = Utilities_1.PathJoin(path, fileName);
@@ -70,7 +93,7 @@ exports.writeTemplate = (template, customDir) => {
 };
 exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, function* () {
     spinnerText("Recording");
-    if (util_1.isUndefined(config.transparent))
+    if (Utilities_1.isUndefined(config.transparent))
         config.transparent = false;
     const getOutputFile = () => config.outNameFile + (config.transparent ? '.avi' : '.mp4');
     if (typeof config.width == 'string')
@@ -86,33 +109,26 @@ exports.recordTemplate = (config, log) => __awaiter(void 0, void 0, void 0, func
         output: getOutputFile(),
         quiet: !log || false
     };
-    console.log(options);
     if (config.transparent) {
         options.outputOptions = ['-vcodec', 'ffvhuff'];
         options.transparentBackground = true;
         options.pixFmt = '';
     }
-    return new Promise((resolve, reject) => {
-        console.log(chalk_1.default.green("Timecut:"), options);
-        Recorder_1.RecordHTMLFile(options)
-            .then(() => {
-            console.log(chalk_1.default.red('\nAquí llegamos compas\n'));
-            if (config && !config.keepFrames)
-                fs_1.unlinkSync(config.inputUrl);
-            resolve(options);
-        })
-            .catch((err) => {
-            console.error(chalk_1.default.red(err));
-            reject(err);
-        });
+    yield Recorder_1.RecordHTMLFile(options)
+        .catch((err) => {
+        console.error(Utilities_1.Color.red(err));
+        throw new Error(err);
     });
+    if (config && !config.keepFrames)
+        Utilities_1.removeDir(config.inputUrl);
+    return (options);
 });
 exports.processElement = (_element, config) => {
     spinner.start();
     prefixText = `${Utilities_1.Color.cyan(_element.templateConfig.name)}`;
     return new Promise((resolve, reject) => __awaiter(void 0, void 0, void 0, function* () {
         let element = _element;
-        if (util_1.isUndefined(_element))
+        if (Utilities_1.isUndefined(_element))
             reject("Element its undefined: " + JSON.stringify(_element));
         let dir = 'videoElements';
         if (config && config.customDir) {

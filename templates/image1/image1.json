@@ -1,12 +1,20 @@
 {
     "plugins": ["anime.js", "bootstrap"],
     "defParams":{
-        "width": "200px",
-        "height": "200px",
+        "width": "full",
+        "height": "full",
         "duration": 5,
         "elementPosition": {
-            "x": 30,
-            "y": 30
+            "x": 0,
+            "y": 0
         }
-    }
+    },
+    "assets":[
+        {
+            "default": "image1.png",
+            "name": "watermark_img",
+            "src": "watermark_img.png",
+            "type": "file"
+        }
+    ]
 }

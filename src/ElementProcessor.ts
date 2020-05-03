@@ -1,6 +1,14 @@
-import { getOrCreateDir, asyncForEach, getJSON, pluginsUtilities, copyFile, removeDir, PathJoin } from "./Utilities";
-import { IVideoElement, IElementConfig, IPlugin, IElementProcessorState } from "./Interfaces";
+import { IVideoElement, IElementConfig, IElementProcessorState } from "./Interfaces";
 import { processElement } from "./VideoElement";
+import { 
+    getOrCreateDir, 
+    asyncForEach, 
+    getJSON, 
+    pluginsUtilities, 
+    copyFile, 
+    removeDir, 
+    PathJoin 
+} from "./Utilities";
 
 export class ElementProcessor {
     private id:number;

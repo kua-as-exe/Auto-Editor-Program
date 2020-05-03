@@ -1,17 +1,24 @@
 import { ITemplate, IVideoElement, IElementConfig, IRecordConfig } from './Interfaces';
-import { getJSON, getFile, pluginsUtilities, getOrCreateDir, Color, PathJoin} from './Utilities';
 import { RecordHTMLFile } from './Recorder';
+import { 
+    getJSON, 
+    getFile, 
+    pluginsUtilities, 
+    getOrCreateDir, 
+    Color, 
+    PathJoin, 
+    //mergeJSON, 
+    isUndefined,
+    exists,
+    removeDir,
+    writeFile,
+    PathResolve
+} from './Utilities';
 
-import { writeFileSync, existsSync, unlinkSync} from 'fs';
-import { basename } from 'path';
-import { isUndefined } from 'util';
-
-//const timecut = require('timecut');
-const mergeJSON = require('merge-json').merge;
+import { basename, normalize } from 'path';
 import Ora from 'ora';
-import chalk from 'chalk';
-
-
+import { writeFileSync } from 'fs';
+const mergeJSON = require('merge-json').merge
 
 let fileNumber = 0;
 const spinner = Ora();
@@ -35,11 +42,17 @@ export const writeTemplate = (template: ITemplate, customDir?: string): Promise<
                     : template.plugins = plugins;
     };
 
+    const videoResolution = {
+        width: "1280px",
+        height: "720px"
+    }
+
     return new Promise<ITemplate>( (resolve, reject) => {
-        if(existsSync(`templates/${template.name}`)) {
+        if(exists(`templates/${template.name}`)) {
             let mainTemplate: string = getFile(template.customMainTemplate || `templates/mainTemplate.html`);
             let config: any = getJSON( PathJoin('templates',template.name,template.name) + '.json'); 
-
+            
+            if(config.assets) template.assets = config.assets
             if(config.plugins) appendConfigPlugins(config.plugins);
             mainTemplate = mainTemplate.replace(`<!--PLUGINS-->`, pluginsUtilities.getTags(template.plugins || []));
             mainTemplate = mainTemplate.replace(`/*STYLES*/`, getCSS());
@@ -50,7 +63,26 @@ export const writeTemplate = (template: ITemplate, customDir?: string): Promise<
             template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
             template.params = mergeJSON({'templateName': template.name }, template.params);//añade el nombre de la plantilla como parámetro
             
+            if(template.params){
+                if(template.params.width == "full") template.params.width = videoResolution.width;
+                if(template.params.height == "full") template.params.height = videoResolution.height;
+            }
+
             if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params)); 
+
+            if(template.assets){
+                let template_assets = template.assets
+                template_assets.forEach( asset => {
+                    var name = asset.name || "";
+                    var src = asset.src || "./";
+                    var type = asset.type || "file";
+                    if(type == "file") src = PathJoin('./','assets',template.name, src); // aquí puede haber un error en caso de haber varios elementos de la misma plantilla
+                    //var Normalizedsrc = PathResolve(src);
+                    //console.log(Normalizedsrc);
+                    if(name && src)
+                        mainTemplate = mainTemplate.replace(`{${name}}`, src);
+                }); 
+            }
 
             const fileName = template.customName || `temp${fileNumber}.html`;
             const path = template.customPath || 'recorder';
@@ -83,27 +115,19 @@ export const recordTemplate = async (config: IRecordConfig, log?: boolean): Prom
         quiet: !log || false
     };
 
-    console.log(options)
-
     if(config.transparent) {
         options.outputOptions = ['-vcodec', 'ffvhuff'];
         options.transparentBackground = true;
         options.pixFmt = '';
     }
 
-    return new Promise( (resolve, reject) => {
-        console.log(chalk.green("Timecut:"), options);
-        RecordHTMLFile(options)
-        .then( () => {
-            console.log(chalk.red('\nAquí llegamos compas\n'))
-            if(config && !config.keepFrames) unlinkSync(config.inputUrl);
-            resolve(options)
-        })
+    await RecordHTMLFile(options)
         .catch( (err: any) => {
-            console.error(chalk.red(err))
-            reject(err);
+            console.error(Color.red(err));
+            throw new Error(err);
         });
-    });
+    if(config && !config.keepFrames) removeDir(config.inputUrl);
+    return(options)
 };
 
 export const processElement = (_element: IVideoElement, config?: IElementConfig): Promise<IVideoElement> => {

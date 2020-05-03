@@ -13,33 +13,16 @@ const ElementProcessor_1 = require("./src/ElementProcessor");
 const child_process_1 = require("child_process");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const ep = new ElementProcessor_1.ElementProcessor(0, {
-        preserveProccess: false,
+        preserveProccess: true,
         log: false
-    });
-    ep.add({
-        templateConfig: {
-            name: 'simpleText',
-            params: {
-                'title': 'Fucking Mint',
-                'subtitle': 'FUCKING MINT',
-                'duration': 8,
-                'fps': 25,
-                'startTime': 2,
-                'timeOffset': 1,
-                'videoPosition': {
-                    'x': 0,
-                    'y': 0
-                },
-            }
-        }
     });
     ep.add({
         templateConfig: {
             name: 'anotation1',
             params: {
-                'text': 'A & S',
+                'text': 'Arso Tech',
                 'subtext': 'Fine guitars, bro',
-                'duration': 6,
+                'duration': 5,
                 'fps': 25,
                 'startTime': 5,
                 'videoPosition': {
@@ -49,9 +32,24 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     });
+    ep.add({
+        templateConfig: {
+            name: 'image1',
+            params: {
+                'duration': 8,
+                'fps': 25,
+                'startTime': 1,
+                'timeOffset': 1,
+                'videoPosition': {
+                    'x': 0,
+                    'y': 0
+                },
+            }
+        }
+    });
     const res = yield ep.processElements();
     //console.log(res);
-    const mainVideoDir = 'processors/processor_0/ToVPS.mov';
+    const mainVideoDir = 'processors/processor_0/video2.mkv';
     const outVideoDir = 'processors/processor_0/videoOutput.mp4';
     const videoElements = [];
     const filters = [];

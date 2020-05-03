@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Utilities_1 = require("./Utilities");
 const VideoElement_1 = require("./VideoElement");
+const Utilities_1 = require("./Utilities");
 class ElementProcessor {
     constructor(id, config) {
         this.mainPath = "processors";

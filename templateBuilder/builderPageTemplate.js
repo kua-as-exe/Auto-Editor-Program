@@ -1,4 +1,4 @@
-
+onDev = true;
 var percent = (v, p) => v*p/100;
 
 
@@ -35,7 +35,7 @@ function changeSize( width, height){
         y.querySelector("span").style.opacity = 1;
         y.style.height = (height-6)+'px';
     }
-
+    refreshPosition()
 }
 
 function refreshPosition(){

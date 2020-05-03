@@ -15,6 +15,7 @@ export function record(config: IRecordHTMLFileConfig): Promise<any>{
         roundToEvenWidth: true,
         roundToEvenHeight: true,
       }, config || {});
+      
       var output = PathResolve(process.cwd(), config.output || 'video.mp4');
       //var output = config.output
     

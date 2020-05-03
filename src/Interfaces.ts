@@ -26,6 +26,7 @@ export interface ITemplate {
     customMainTemplate?: string,
     outputUrl?: string,
     videoOutput?: Object
+    assets?: IVAsset[];
 }
 
 export interface IPlugin {
@@ -66,3 +67,9 @@ export interface IRecordHTMLFileConfig {
     output: string,
     quiet: boolean
 }
+
+export interface IVAsset {
+    default? : string,
+    name? : string
+    src? : string,
+    type? : string}
