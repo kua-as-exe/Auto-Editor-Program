@@ -9,7 +9,8 @@ export interface IElementConfig {
     customDir?: string,
     relativePath?: string,
     log?: boolean,
-    preserveProccess?: boolean
+    preserveProccess?: boolean,
+    resolution?: { width: number, height:number }
 }
 
 export interface ITemplate {
@@ -25,8 +26,9 @@ export interface ITemplate {
     customName?: string,
     customMainTemplate?: string,
     outputUrl?: string,
-    videoOutput?: Object
-    assets?: IVAsset[];
+    videoOutput?: Object,
+    assets?: IVAsset[],
+    resolution?: {width: number, height: number}
 }
 
 export interface IPlugin {

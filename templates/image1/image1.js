@@ -7,6 +7,8 @@ setTimeout(()=>{
 },500)
 /*document.getElementById('title').innerText = params.title || 'Título'
 document.getElementById('subtitle').innerText = params.subtitle || 'Subtítulo'*/
+
+duration = params.duration*1000 || 8000
 anime()
 anime.timeline({
 
@@ -15,11 +17,11 @@ anime.timeline({
     opacity: [0,1],
     easing: 'easeInOutQuart',
     duration: 1000,
-    delay: 500
+    delay: 0
 }).add({
     targets: 'img',
     opacity: [1,0],
     easing: 'easeInOutQuart',
-    duration: 2000,
-    delay: 5000
+    duration: 1000,
+    delay: duration-2000
 })

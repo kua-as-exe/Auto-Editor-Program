@@ -29,6 +29,7 @@ class ElementProcessor {
             yield Utilities_1.asyncForEach(this.elements, (videoElement) => __awaiter(this, void 0, void 0, function* () {
                 var elem = yield VideoElement_1.processElement(videoElement, {
                     customDir: this.path,
+                    resolution: this.resolution,
                     preserveProccess: this.preserveProccess,
                     log: this.log
                 });
@@ -80,6 +81,9 @@ class ElementProcessor {
                 plugins: false,
                 resources: false
             }
+        };
+        this.resolution = (config === null || config === void 0 ? void 0 : config.resolution) || {
+            width: 1280, height: 720
         };
     }
 }

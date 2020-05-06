@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+    <title>Jorge</title>
+</head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <a>Auto Editor Program</a>
+        </nav>
+        <div style="margin:2rem;"> 
+               
+            <div class="jumbotron"  style="padding:40px;">
+              <h3>Bienvenido Jorge</h3>
+              <form id="files" enctype="multipart/form-data" method="post">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <input class="btn btn-light btn-block" type="file" name="file-to-upload">
+                    <input class="btn btn-info" type="submit" value="Upload">
+                </div>
+              </form>  
+              
+              <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+              <p><a class="btn btn-primary btn-block" href="#" role="button">Comenzar edición</a></p>
+            </div>
+          </div>
+    </body>
+
+    <script>
+        function formSubmit(event) {
+            var url = "/arreola/uploadFile";
+            var request = new XMLHttpRequest();
+            request.open('POST', url, true);
+            request.onload = function() { // request successful
+                //if(request.status == 404) throw new Error("Error subiendo el archivo");
+                console.log(request);
+                if(request.status == 200){
+                    console.log(request.responseText);
+                    console.log("Se puede comenzar con la edición");
+                }
+            };
+
+            request.onerror = function() {
+                console.log("FALLA FALLA");
+            };
+
+            request.send(new FormData(event.target)); // create FormData from form that triggered event
+            event.preventDefault();
+        }
+
+        // and you can attach form submit event like this for example
+        function attachFormSubmitEvent(formId){
+            document.getElementById(formId).addEventListener("submit", formSubmit);
+        }
+
+        attachFormSubmitEvent("files");
+    </script>
+</html>

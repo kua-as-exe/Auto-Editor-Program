@@ -14,8 +14,8 @@ var watch = require('watch')
  
 var app = express()
 
-const currentTemplate = 'image1';
-//const currentTemplate = 'simpleText';
+//const currentTemplate = 'image1';
+const currentTemplate = 'anotation1';
 const templateBuilderPath = './templateBuilder';
 const builderPageTemplate = 'builderPageTemplate.html';
  

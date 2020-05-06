@@ -19,6 +19,7 @@ export class ElementProcessor {
     private preserveProccess: boolean = false;
     private log: boolean = false;
     private state: IElementProcessorState;
+    resolution: { width:number, height:number }
 
     constructor(id: number, config?: IElementConfig){
         this.id = id;
@@ -35,6 +36,9 @@ export class ElementProcessor {
                 resources: false
             }
         };
+        this.resolution = config?.resolution || {
+            width: 1280, height: 720
+        }
     }
 
     add = (videoElement: IVideoElement) => {
@@ -51,6 +55,7 @@ export class ElementProcessor {
         await asyncForEach(this.elements, async (videoElement: IVideoElement)=>{
             var elem = await processElement(videoElement, {
                 customDir: this.path,
+                resolution: this.resolution,
                 preserveProccess: this.preserveProccess,
                 log: this.log
             });

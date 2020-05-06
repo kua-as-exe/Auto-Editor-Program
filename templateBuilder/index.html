@@ -7,25 +7,39 @@
 
         <style>
             
-    
-#bg {
-    padding: 0px;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    display: grid;
+    #back, #back2 {
+    width: 0%;
+    height: 50%;
+    background-color: #108dbea2;
+    /* padding: 2%;*/
+    display: inline-grid;
     align-items: center;
 }
 
-img {
-    width: 30%; 
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-
-    opacity: 0;
+span{
+    color: whitesmoke;
 }
+* {
+    font-family: "Lucida Console";
+}
+
+#subtext {
+    font-size: 20px;
+    overflow: hidden;
+    width: 0%;
+    text-align: left;
+    padding-left: 1rem;
+}
+
+#text {
+    font-size: 30px;
+    text-align: left;
+    overflow: hidden;
+    font-weight: bold;
+    padding-left: 1rem;
+    width: 0%;
+}
+
 
         </style>
     <viewer>
@@ -54,8 +68,12 @@ img {
                     </div>
 
                     <main>
-                <div id="bg">
-    <img src="assets/image1/watermark_img.png" alt="" width="100%">
+                <div id="back">
+    <span id="text"></span>
+    
+</div>
+<div id="back2">
+    <span id="subtext"></span>
 </div>
                     </main>
                 </container> 
@@ -83,37 +101,59 @@ img {
         
         <script>
             
-            var params = {"templateName":"image1","width":"full","height":"full","duration":5,"elementPosition":{"x":0,"y":0}};
+            var params = {"templateName":"anotation1","width":"300px","height":"100px","duration":10,"elementPosition":{"x":50,"y":50}};
             const main = document.getElementsByTagName('main')[0];
             if(params.width) main.style.width = params.width;
             if(params.height) main.style.height = params.height;
 
-            
-setTimeout(()=>{
-    console.log(params.screenSize)
-    if(onDev) changeSize(params.screenSize.width, params.screenSize.height)
-    //main.style.width = params.screenSize.width;
-    //main.style.height = params.screenSize.height;
-},500)
-/*document.getElementById('title').innerText = params.title || 'Título'
-document.getElementById('subtitle').innerText = params.subtitle || 'Subtítulo'*/
-anime()
-anime.timeline({
+            document.getElementById('text').innerText = params.text || 'Jorge Arreola'
+document.getElementById('subtext').innerText = params.subtext || 'Subtexto'
 
+let duration = params.duration * 1000 || 5000
+
+anime.timeline({
+    loop: false, autoplay: true,
 }).add({
-    targets: 'img',
-    opacity: [0,1],
+    targets: "#back",
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1000,
+}).add({
+    targets: "#text",
+    height: ['0%', '100%'],
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
     easing: 'easeInOutQuart',
     duration: 1000,
     delay: 500
 }).add({
-    targets: 'img',
-    opacity: [1,0],
+    targets: "#back2",
+    width: ['0%', '80%'],
+    opacity: ['0%', '100%'],
     easing: 'easeInOutQuart',
-    duration: 2000,
-    delay: 5000
+    duration: 1000
+}).add({
+    targets: "#subtext",
+    width: ['0%', '100%'],
+    opacity: ['0%', '100%'],
+    easing: 'easeInOutQuart',
+    duration: 1000
+}).add({
+    targets: "#back2",
+    height: ['50%', '0%'],
+    opacity: ['100%', '0%'],
+    easing: 'easeInOutQuart',
+    duration: 1000,
+    delay: duration-3500
+}).add({
+    targets: "#back",
+    width: ['100%', '0%'],
+    opacity: ['100%', '0%'],
+    easing: 'easeInOutQuart',
+    duration: 1000,
+    delay: 50
 })
-
             
             </script>
 

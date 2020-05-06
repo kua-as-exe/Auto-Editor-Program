@@ -36,11 +36,8 @@ exports.writeTemplate = (template, customDir) => {
             template.plugins.concat(plugins)
             : template.plugins = plugins;
     };
-    const videoResolution = {
-        width: "1280px",
-        height: "720px"
-    };
     return new Promise((resolve, reject) => {
+        var _a, _b;
         if (Utilities_1.exists(`templates/${template.name}`)) {
             let mainTemplate = Utilities_1.getFile(template.customMainTemplate || `templates/mainTemplate.html`);
             let config = Utilities_1.getJSON(Utilities_1.PathJoin('templates', template.name, template.name) + '.json');
@@ -56,11 +53,13 @@ exports.writeTemplate = (template, customDir) => {
                 template.params = {};
             template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
             template.params = mergeJSON({ 'templateName': template.name }, template.params); //añade el nombre de la plantilla como parámetro
+            //template.params.videoPositon AKI FALTA ALGO
+            // QUE LE PONGAS QUE SI NO ESPECIFICAN LA POSICIÓN EN LA PANTALLA, PONGA LA POR DEFECTO DEL JSON
             if (template.params) {
                 if (template.params.width == "full")
-                    template.params.width = videoResolution.width;
+                    template.params.width = ((_a = template.resolution) === null || _a === void 0 ? void 0 : _a.width) + "px";
                 if (template.params.height == "full")
-                    template.params.height = videoResolution.height;
+                    template.params.height = ((_b = template.resolution) === null || _b === void 0 ? void 0 : _b.height) + "px";
             }
             if (template.params)
                 mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params));
@@ -137,6 +136,8 @@ exports.processElement = (_element, config) => {
         }
         //if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
         yield Utilities_1.getOrCreateDir(dir);
+        element.templateConfig.resolution = config === null || config === void 0 ? void 0 : config.resolution;
+        element.templateConfig.params.resolution = config === null || config === void 0 ? void 0 : config.resolution;
         let htmlFile = yield exports.writeTemplate(element.templateConfig);
         let filename = path_1.basename(htmlFile.fileName || '', '.html');
         element.recordConfig = {

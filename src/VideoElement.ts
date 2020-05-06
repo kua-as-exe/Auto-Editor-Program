@@ -41,12 +41,7 @@ export const writeTemplate = (template: ITemplate, customDir?: string): Promise<
                     template.plugins.concat(plugins) 
                     : template.plugins = plugins;
     };
-
-    const videoResolution = {
-        width: "1280px",
-        height: "720px"
-    }
-
+    
     return new Promise<ITemplate>( (resolve, reject) => {
         if(exists(`templates/${template.name}`)) {
             let mainTemplate: string = getFile(template.customMainTemplate || `templates/mainTemplate.html`);
@@ -63,9 +58,12 @@ export const writeTemplate = (template: ITemplate, customDir?: string): Promise<
             template.params = mergeJSON(config.defParams, template.params); // el segundo parámetro domina el primero
             template.params = mergeJSON({'templateName': template.name }, template.params);//añade el nombre de la plantilla como parámetro
             
+            //template.params.videoPositon AKI FALTA ALGO
+            // QUE LE PONGAS QUE SI NO ESPECIFICAN LA POSICIÓN EN LA PANTALLA, PONGA LA POR DEFECTO DEL JSON
+
             if(template.params){
-                if(template.params.width == "full") template.params.width = videoResolution.width;
-                if(template.params.height == "full") template.params.height = videoResolution.height;
+                if(template.params.width == "full") template.params.width = template.resolution?.width + "px";
+                if(template.params.height == "full") template.params.height = template.resolution?.height+"px";
             }
 
             if(template.params) mainTemplate = mainTemplate.replace(`{ /*PARAMS*/}`, JSON.stringify(template.params)); 
@@ -144,6 +142,8 @@ export const processElement = (_element: IVideoElement, config?: IElementConfig)
 
         //if (dir && !existsSync(dir)) mkdirSync(dir, { recursive: true }); // create path if dont exists
         await getOrCreateDir(dir)
+        element.templateConfig.resolution = config?.resolution;
+        element.templateConfig.params.resolution = config?.resolution;
 
         let htmlFile: ITemplate = await writeTemplate(element.templateConfig);
         let filename = basename(htmlFile.fileName || '', '.html');
