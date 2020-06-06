@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ElementProcessor_1 = require("./../../src/ElementProcessor");
+const ElementProcessor_1 = require("../../src/ElementProcessor");
 const child_process_1 = require("child_process");
 const Utilities_1 = require("../../src/Utilities");
 const fs_extra_1 = require("fs-extra");
@@ -25,7 +25,7 @@ exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, fu
             params: {
                 'text': 'Jorge Arreola',
                 'subtext': 'CodeBros',
-                'duration': 5,
+                'duration': 8,
                 //'fps': 25,
                 'startTime': 8,
                 'videoPosition': {
@@ -41,7 +41,7 @@ exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, fu
             params: {
                 'duration': 5,
                 //'fps': 25,
-                'startTime': 1,
+                'startTime': 3,
                 'timeOffset': 1,
                 'videoPosition': {
                     'x': 0,
@@ -52,25 +52,27 @@ exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, fu
     });
     const res = yield video.processElements();
     //console.log(res);
-    let videoPath = Utilities_1.PathJoin(path, videoName);
-    if (!Utilities_1.exists(videoPath)) {
+    let videoOriginPath = Utilities_1.PathJoin(path, 'videos', videoName);
+    console.log(videoOriginPath);
+    if (!Utilities_1.exists(videoOriginPath)) {
         console.log("Video file path wrong or not existst");
         return 0;
     }
-    let mainVideoDir = videoPath;
-    Utilities_1.getOrCreateDir(videoOutputPath);
-    const outVideoDir = Utilities_1.PathJoin(videoOutputPath, videoName);
+    let mainVideoDir = videoOriginPath;
+    const outVideoDir = Utilities_1.PathJoin(path, 'output');
+    Utilities_1.getOrCreateDir(outVideoDir);
+    const outVideoPath = Utilities_1.PathJoin(outVideoDir, videoName);
     const videoElements = [];
     const filters = [];
     //const duration = 15;
+    console.log("VAMONOS ALV");
     const addVideoElement = (element, _inputChannel1, _inputChannel2, _outputChannel) => {
         //console.log("videoElement", videoElements, "\n channel: ", _outputChannel, "\n")
         if (element && element.videoOutput.output) {
             let startTime = element.templateConfig.params.startTime || 0;
             startTime -= element.templateConfig.params.timeOffset || 0;
-            let xPosition = element.templateConfig.params.videoPosition.x || 0;
-            let yPosition = element.templateConfig.params.videoPosition.y || 0;
-            console.log(xPosition, yPosition);
+            let xPosition = element.templateConfig.params.videoPosition && element.templateConfig.params.videoPosition.x || 0;
+            let yPosition = element.templateConfig.params.videoPosition && element.templateConfig.params.videoPosition.y || 0;
             var offsets = element.templateConfig.params.positionOffset;
             if (offsets)
                 xPosition -= offsets.x || 0;
@@ -95,33 +97,33 @@ exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, fu
     };
     addVideoElements(res);
     let scale = "\"scale=" + video.resolution.width + ":" + video.resolution.height + "\"";
-    let resizedVideoOutput = Utilities_1.PathJoin(path, "_" + videoName + ".mp4");
+    let resizedVideoOutput = Utilities_1.PathJoin(path, "videos", "_" + videoName + ".mp4");
     let videoResizeParams = [
         ['./src/ffmpeg.exe'],
         ['-i', mainVideoDir],
         ['-vf', scale],
         ['-y', resizedVideoOutput]
-    ];
-    var ffmpegCommand = videoResizeParams.map(e => e.join(" ")).join(" ");
-    console.log(ffmpegCommand);
-    var t = child_process_1.spawnSync("powershell.exe", [ffmpegCommand]);
+    ].map(e => e.join(" ")).join(" ");
+    console.log(videoResizeParams);
+    var t = yield child_process_1.spawnSync("powershell.exe", [videoResizeParams]);
     console.log(t.stdout.toString());
     console.log(t.stderr.toString());
-    yield Utilities_1.removeDir(mainVideoDir);
+    Utilities_1.removeDir(mainVideoDir);
     mainVideoDir = mainVideoDir + ".mp4";
-    yield fs_extra_1.renameSync(resizedVideoOutput, mainVideoDir);
+    console.log(mainVideoDir);
+    fs_extra_1.renameSync(resizedVideoOutput, mainVideoDir);
     let videoParams = [
         ['./src/ffmpeg.exe'],
-        //['-t', duration],
+        // ['-t', duration],
         ['-i', mainVideoDir],
         videoElements,
         ['-filter_complex', '"', filters.join("; "), '"'],
         ['-y'],
-        [outVideoDir]
+        [outVideoPath + ".mp4"]
     ];
-    var ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
+    let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
     console.log(ffmpegCommand);
-    var t = child_process_1.spawnSync("powershell.exe", [ffmpegCommand]);
+    var t = yield child_process_1.spawnSync("powershell.exe", [ffmpegCommand]);
     console.log(t.stdout.toString());
     console.log(t.stderr.toString());
 });

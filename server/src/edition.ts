@@ -1,5 +1,5 @@
-import { ElementProcessor } from './../../src/ElementProcessor';
-import { IVideoElement } from "./../../src/Interfaces";
+import { ElementProcessor } from '../../src/ElementProcessor';
+import { IVideoElement } from "../../src/Interfaces";
 import { spawnSync } from 'child_process';
 import { PathJoin, exists, getOrCreateDir, removeDir } from '../../src/Utilities';
 import { renameSync } from 'fs-extra';
@@ -45,7 +45,8 @@ export const startEdition = async (path: string, videoName:string) => {
 
     const res = await video.processElements();
     //console.log(res);
-    let videoOriginPath = PathJoin(path, videoName);
+    let videoOriginPath = PathJoin(path, 'videos', videoName);
+    console.log(videoOriginPath);
     if (!exists(videoOriginPath)) {
         console.log("Video file path wrong or not existst");
         return 0;
@@ -95,7 +96,7 @@ export const startEdition = async (path: string, videoName:string) => {
     addVideoElements(res);
 
     let scale = "\"scale=" + video.resolution.width + ":" + video.resolution.height + "\"";
-    let resizedVideoOutput = PathJoin(path, "_" + videoName + ".mp4");
+    let resizedVideoOutput = PathJoin(path, "videos", "_"  + videoName + ".mp4");
     let videoResizeParams = [
         ['./src/ffmpeg.exe'],
         ['-i', mainVideoDir],

@@ -28,7 +28,8 @@
   "scripts": {
     "start_server": "node server/dist/server.js",
     "dev_server": "nodemon server/src/server.ts",
-    "build_server": "tsc -p /server"
+    "build_server": "tsc -p /server",
+    "edit_videos_p1": "node ./server/src/editVIdeos.js"
   },
   "repository": {
     "type": "git",

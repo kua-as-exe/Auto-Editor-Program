@@ -9,11 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ElementProcessor_1 = require("./../../src/ElementProcessor");
+const ElementProcessor_1 = require("../../src/ElementProcessor");
 const child_process_1 = require("child_process");
 const Utilities_1 = require("../../src/Utilities");
 const fs_extra_1 = require("fs-extra");
-exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, function* () {
+const processorPath = './processors/processor_1';
+const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const video = new ElementProcessor_1.ElementProcessor(1, {
         resolution: { width: 1280, height: 720 },
         preserveProccess: false,
@@ -50,21 +51,25 @@ exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, fu
             }
         }
     });
-    const res = yield video.processElements();
-    //console.log(res);
-    let videoOriginPath = Utilities_1.PathJoin(path, videoName);
-    if (!Utilities_1.exists(videoOriginPath)) {
-        console.log("Video file path wrong or not existst");
-        return 0;
-    }
-    let mainVideoDir = videoOriginPath;
-    const outVideoDir = Utilities_1.PathJoin(path, 'output');
+    const elements = yield video.processElements();
+    const outVideoDir = Utilities_1.PathJoin(processorPath, 'output');
     Utilities_1.getOrCreateDir(outVideoDir);
+    let videos = yield fs_extra_1.readdirSync(Utilities_1.PathJoin(processorPath, 'videos'));
+    videos.forEach((video) => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("Editing video: ", video);
+        yield editVideo(video, elements);
+    }));
+});
+const editVideo = (inVideoPath, elements) => __awaiter(void 0, void 0, void 0, function* () {
+    let originalFile = inVideoPath;
+    let videoOriginPath = Utilities_1.PathJoin(processorPath, 'videos', inVideoPath);
+    let videoPathElements = Utilities_1.PathParse(originalFile);
+    let videoName = videoPathElements.name + ".mp4";
+    let outVideoDir = Utilities_1.PathJoin(processorPath, 'output');
+    let mainVideoDir = videoOriginPath;
     const outVideoPath = Utilities_1.PathJoin(outVideoDir, videoName);
     const videoElements = [];
     const filters = [];
-    //const duration = 15;
-    console.log("VAMONOS ALV");
     const addVideoElement = (element, _inputChannel1, _inputChannel2, _outputChannel) => {
         //console.log("videoElement", videoElements, "\n channel: ", _outputChannel, "\n")
         if (element && element.videoOutput.output) {
@@ -94,35 +99,19 @@ exports.startEdition = (path, videoName) => __awaiter(void 0, void 0, void 0, fu
             lastOutput = outChannel;
         });
     };
-    addVideoElements(res);
-    let scale = "\"scale=" + video.resolution.width + ":" + video.resolution.height + "\"";
-    let resizedVideoOutput = Utilities_1.PathJoin(path, "_" + videoName + ".mp4");
-    let videoResizeParams = [
+    addVideoElements(elements);
+    let ffmpegCommand = [
         ['./src/ffmpeg.exe'],
-        ['-i', mainVideoDir],
-        ['-vf', scale],
-        ['-y', resizedVideoOutput]
-    ].map(e => e.join(" ")).join(" ");
-    console.log(videoResizeParams);
-    var t = yield child_process_1.spawnSync("powershell.exe", [videoResizeParams]);
-    console.log(t.stdout.toString());
-    console.log(t.stderr.toString());
-    Utilities_1.removeDir(mainVideoDir);
-    mainVideoDir = mainVideoDir + ".mp4";
-    console.log(mainVideoDir);
-    fs_extra_1.renameSync(resizedVideoOutput, mainVideoDir);
-    let videoParams = [
-        ['./src/ffmpeg.exe'],
-        // ['-t', duration],
-        ['-i', mainVideoDir],
+        ['-i', '\"' + mainVideoDir + '\"'],
         videoElements,
         ['-filter_complex', '"', filters.join("; "), '"'],
         ['-y'],
-        [outVideoPath + ".mp4"]
-    ];
-    let ffmpegCommand = videoParams.map(e => e.join(" ")).join(" ");
+        [outVideoPath]
+    ].map(e => e.join(" ")).join(" ");
     console.log(ffmpegCommand);
     var t = yield child_process_1.spawnSync("powershell.exe", [ffmpegCommand]);
+    console.log(t.status);
     console.log(t.stdout.toString());
     console.log(t.stderr.toString());
 });
+main();
